@@ -1,0 +1,27 @@
+export const ImageLeftBulletsRightSlide = {
+    type: "imageLeftBulletsRight",
+  
+    fromJSON(raw) {
+      const image = raw.data?.find(d => d.name === "image")?.content;
+      const bullets = raw.data?.filter(d => d.name === "bullet").map(d => d.content);
+  
+      if (!image || !bullets?.length) {
+        throw new Error("imageLeftBulletsRight: image and bullets required");
+      }
+  
+      return Object.freeze({
+        type: "imageLeftBulletsRight",
+        render() {
+          return `
+            <section class="slide image-left-bullets-right">
+              <img src="${image}" alt="" />
+              <ul>
+                ${bullets.map(b => `<li>${b}</li>`).join("")}
+              </ul>
+            </section>
+          `;
+        }
+      });
+    }
+  };
+  
