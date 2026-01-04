@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Taleem Slides – Visual Check</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: system-ui, sans-serif;
+      background: #0e0f14;
+      color: #eaeaf0;
+    }
+
+    .slide-wrapper {
+      margin-bottom: 48px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+    }
+
+    /* purely visual helpers */
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>taleem-slides – visual smoke test</h1>
+
+  <div id="app"></div>
+
+  <script type="module">
+    import { slideBuilder } from "./src/interpreter/slideBuilder.js";
+
+    async function run() {
+      const res = await fetch("./decks/goldstandar_eq_28aug25.json");
+      const deck = await res.json();
+
+      console.log("Loaded deck:", deck);
+
+      const slides = slideBuilder(deck);
+
+      console.log("Built slides:", slides);
+
+      const app = document.getElementById("app");
+
+      slides.forEach((slide, index) => {
+        console.log(`Rendering slide ${index}`, slide);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "slide-wrapper";
+
+        // PURE ENGINE OUTPUT
+        const html = slide.render();
+
+        console.log(`HTML output [${index}]:`, html);
+
+        wrapper.innerHTML = html;
+        app.appendChild(wrapper);
+      });
+    }
+
+    run().catch(err => {
+      console.error("Fatal error:", err);
+      document.body.innerHTML += `<pre style="color:red">${err.stack}</pre>`;
+    });
+  </script>
+
+</body>
+</html>
