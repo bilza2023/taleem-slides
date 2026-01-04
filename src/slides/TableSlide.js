@@ -12,16 +12,15 @@ export const TableSlide = {
         type: "table",
         render() {
           return `
-            <table class="slide table-slide">
-              ${rows
-                .map(
-                  row =>
-                    `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`
-                )
-                .join("")}
+            <table class="slide table">
+              ${rows.map(
+                row =>
+                  `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`
+              ).join("")}
             </table>
           `;
         }
+        
       });
     }
   };

@@ -28,8 +28,13 @@ export const TitleSlide = {
         type: "titleSlide",
   
         render() {
-          return `<div class="slide title-slide"><h1>${title}</h1></div>`;
+          return `
+            <div class="slide titleSlide">
+              <h1>${title}</h1>
+            </div>
+          `;
         }
+        
       });
     }
   };

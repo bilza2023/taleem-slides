@@ -14,12 +14,13 @@ export const TwoColumnTextSlide = {
         type: "twoColumnText",
         render() {
           return `
-            <section class="slide two-column-slide">
+            <section class="slide twoColumnText">
               <div class="col left">${left.join("<br/>")}</div>
               <div class="col right">${right.join("<br/>")}</div>
             </section>
           `;
         }
+        
       });
     }
   };

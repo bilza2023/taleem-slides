@@ -42,14 +42,14 @@
     import { slideBuilder } from "./src/interpreter/slideBuilder.js";
 
     async function run() {
-      const res = await fetch("./decks/goldstandar_eq_28aug25.json");
+      const res = await fetch("./decks/parallelogram_properties_no_sound.json");
       const deck = await res.json();
 
-      console.log("Loaded deck:", deck);
+      // console.log("Loaded deck:", deck);
 
       const slides = slideBuilder(deck);
 
-      console.log("Built slides:", slides);
+      // console.log("Built slides:", slides);
 
       const app = document.getElementById("app");
 

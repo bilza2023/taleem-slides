@@ -13,7 +13,7 @@ export const ImageRightBulletsLeftSlide = {
         type: "imageRightBulletsLeft",
         render() {
           return `
-            <section class="slide image-right-bullets-left">
+            <section class="slide imageRightBulletsLeft">
               <ul>
                 ${bullets.map(b => `<li>${b}</li>`).join("")}
               </ul>
@@ -21,6 +21,7 @@ export const ImageRightBulletsLeftSlide = {
             </section>
           `;
         }
+        
       });
     }
   };

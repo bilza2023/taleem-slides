@@ -12,18 +12,16 @@ export const DonutChartSlide = {
         type: "donutChart",
         render() {
           return `
-            <section class="slide donut-chart-slide">
+            <section class="slide donutChart">
               <ul>
-                ${segments
-                  .map(
-                    s =>
-                      `<li>${s.content.label}: ${s.content.value}</li>`
-                  )
-                  .join("")}
+                ${segments.map(
+                  s => `<li>${s.content.label}: ${s.content.value}</li>`
+                ).join("")}
               </ul>
             </section>
           `;
         }
+        
       });
     }
   };

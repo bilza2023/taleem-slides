@@ -10,11 +10,12 @@ export const ImageSlide = {
         type: "imageSlide",
         render() {
           return `
-            <section class="slide image-slide">
+            <section class="slide imageSlide">
               <img src="${src}" alt="" />
             </section>
           `;
         }
+        
       });
     }
   };

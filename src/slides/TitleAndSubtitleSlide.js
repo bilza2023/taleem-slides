@@ -14,12 +14,13 @@ export const TitleAndSubtitleSlide = {
         type: "titleAndSubtitle",
         render() {
           return `
-            <section class="slide title-subtitle-slide">
+            <section class="slide titleAndSubtitle">
               <h1>${title}</h1>
               <h2>${subtitle}</h2>
             </section>
           `;
         }
+        
       });
     }
   };

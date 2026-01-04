@@ -10,11 +10,12 @@ export const ContactSlide = {
         type: "contactSlide",
         render() {
           return `
-            <section class="slide contact-slide">
+            <section class="slide contactSlide">
               ${items.join("")}
             </section>
           `;
         }
+        
       });
     }
   };

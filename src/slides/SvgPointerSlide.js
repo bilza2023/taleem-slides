@@ -10,11 +10,12 @@ export const SvgPointerSlide = {
         type: "svgPointer",
         render() {
           return `
-            <section class="slide svg-pointer-slide">
+            <section class="slide svgPointer">
               ${svg}
             </section>
           `;
         }
+        
       });
     }
   };

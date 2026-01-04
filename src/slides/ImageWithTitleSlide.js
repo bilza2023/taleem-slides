@@ -13,12 +13,13 @@ export const ImageWithTitleSlide = {
         type: "imageWithTitle",
         render() {
           return `
-            <section class="slide image-title-slide">
+            <section class="slide imageWithTitle">
               <img src="${src}" alt="" />
               <h1>${title}</h1>
             </section>
           `;
         }
+        
       });
     }
   };

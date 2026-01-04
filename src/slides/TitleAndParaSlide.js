@@ -13,12 +13,13 @@ export const TitleAndParaSlide = {
         type: "titleAndPara",
         render() {
           return `
-            <section class="slide title-para-slide">
+            <section class="slide titleAndPara">
               <h1>${title}</h1>
               <p>${para}</p>
             </section>
           `;
         }
+        
       });
     }
   };

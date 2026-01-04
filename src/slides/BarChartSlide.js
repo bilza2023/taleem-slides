@@ -24,22 +24,20 @@ export const BarChartSlide = {
   
         render() {
           return `
-            <section class="slide bar-chart-slide">
+            <section class="slide barChart">
               <ul class="bars">
-                ${bars
-                  .map(
-                    b => `
-                      <li class="bar">
-                        <span class="bar-label">${b.content.label}</span>
-                        <span class="bar-value">${b.content.value}</span>
-                      </li>
-                    `
-                  )
-                  .join("")}
+                ${bars.map(
+                  b => `
+                    <li class="bar">
+                      <span class="bar-label">${b.content.label}</span>
+                      <span class="bar-value">${b.content.value}</span>
+                    </li>
+                  `
+                ).join("")}
               </ul>
             </section>
           `;
-        }
+        }        
       });
     }
   };

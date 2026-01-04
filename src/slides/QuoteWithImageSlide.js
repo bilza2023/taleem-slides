@@ -14,7 +14,7 @@ export const QuoteWithImageSlide = {
         type: "quoteWithImage",
         render() {
           return `
-            <section class="slide quote-image-slide">
+            <section class="slide quoteWithImage">
               <img src="${image}" alt="" />
               <blockquote>
                 <p>${quote}</p>
@@ -23,6 +23,7 @@ export const QuoteWithImageSlide = {
             </section>
           `;
         }
+        
       });
     }
   };

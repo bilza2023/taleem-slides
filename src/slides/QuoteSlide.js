@@ -11,12 +11,13 @@ export const QuoteSlide = {
         type: "quoteSlide",
         render() {
           return `
-            <blockquote class="slide quote-slide">
+            <blockquote class="slide quoteSlide">
               <p>${text}</p>
               ${author ? `<footer>${author}</footer>` : ""}
             </blockquote>
           `;
         }
+        
       });
     }
   };

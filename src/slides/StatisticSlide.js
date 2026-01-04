@@ -13,12 +13,13 @@ export const StatisticSlide = {
         type: "statistic",
         render() {
           return `
-            <section class="slide statistic-slide">
+            <section class="slide statistic">
               <div class="stat-value">${value}</div>
               <div class="stat-label">${label}</div>
             </section>
           `;
         }
+        
       });
     }
   };

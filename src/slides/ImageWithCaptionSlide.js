@@ -13,12 +13,13 @@ export const ImageWithCaptionSlide = {
         type: "imageWithCaption",
         render() {
           return `
-            <figure class="slide image-caption-slide">
+            <figure class="slide imageWithCaption">
               <img src="${src}" alt="" />
               <figcaption>${caption}</figcaption>
             </figure>
           `;
         }
+        
       });
     }
   };

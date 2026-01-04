@@ -12,16 +12,15 @@ export const CornerWordsSlide = {
         type: "cornerWordsSlide",
         render() {
           return `
-            <section class="slide corner-words-slide">
-              ${words
-                .map(
-                  (w, i) =>
-                    `<span class="corner-word corner-${i + 1}">${w}</span>`
-                )
-                .join("")}
+            <section class="slide cornerWordsSlide">
+              ${words.map(
+                (w, i) =>
+                  `<span class="corner-word corner-${i + 1}">${w}</span>`
+              ).join("")}
             </section>
           `;
         }
+        
       });
     }
   };

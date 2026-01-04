@@ -12,11 +12,12 @@ export const FillImageSlide = {
         type: "fillImage",
         render() {
           return `
-            <section class="slide fill-image-slide">
+            <section class="slide fillImage">
               <img src="${image}" alt="" />
             </section>
           `;
         }
+        
       });
     }
   };

@@ -10,11 +10,12 @@ export const EqSlide = {
         type: "eq",
         render() {
           return `
-            <section class="slide eq-slide">
+            <section class="slide eq">
               ${raw.data.map(d => `<div>${d.content}</div>`).join("")}
             </section>
           `;
         }
+        
       });
     }
   };

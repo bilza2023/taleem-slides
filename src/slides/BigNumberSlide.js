@@ -11,12 +11,13 @@ export const BigNumberSlide = {
         type: "bigNumber",
         render() {
           return `
-            <section class="slide big-number-slide">
+            <section class="slide bigNumber">
               <div class="number">${value}</div>
               ${label ? `<div class="label">${label}</div>` : ""}
             </section>
           `;
         }
+        
       });
     }
   };

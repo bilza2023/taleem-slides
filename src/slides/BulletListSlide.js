@@ -12,13 +12,14 @@ export const BulletListSlide = {
         type: "bulletList",
         render() {
           return `
-            <section class="slide bullet-list-slide">
+            <section class="slide bulletList">
               <ul>
                 ${bullets.map(b => `<li>${b}</li>`).join("")}
               </ul>
             </section>
           `;
         }
+        
       });
     }
   };
