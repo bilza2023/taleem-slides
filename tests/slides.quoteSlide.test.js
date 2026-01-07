@@ -11,8 +11,10 @@ describe("quoteSlide", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("Hello");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("Hello");
   });
 
   test("throws without quote", () => {

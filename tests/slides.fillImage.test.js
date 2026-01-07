@@ -11,8 +11,10 @@ describe("fillImage", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("/bg.png");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("/bg.png");
   });
 
   test("throws without image", () => {

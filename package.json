@@ -1,7 +1,6 @@
 {
   "name": "taleem-slides",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.3.0",
   "type": "module",
   "description": "Pure slide interpretation engine for deck-v1 (no DOM, no UI)",
 

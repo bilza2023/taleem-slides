@@ -14,9 +14,11 @@ describe("bulletList", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("A");
-    expect(slide.render()).toContain("B");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("A");
+    expect(html).toContain("B");
   });
 
   test("throws with no bullets", () => {

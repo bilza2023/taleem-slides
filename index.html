@@ -21,7 +21,6 @@
       background: rgba(255,255,255,0.03);
     }
 
-    /* purely visual helpers */
     h1, h2, h3 {
       margin-top: 0;
     }
@@ -45,28 +44,38 @@
       const res = await fetch("./decks/parallelogram_properties_no_sound.json");
       const deck = await res.json();
 
-      // console.log("Loaded deck:", deck);
-
-      const slides = slideBuilder(deck);
-
-      // console.log("Built slides:", slides);
+      // NEW: slideBuilder returns SlideManager
+      const manager = slideBuilder(deck);
 
       const app = document.getElementById("app");
 
-      slides.forEach((slide, index) => {
-        console.log(`Rendering slide ${index}`, slide);
+      // ---- OPTION 1: render whole deck (static dump) ----
+      /*
+      const wrapper = document.createElement("div");
+      wrapper.className = "slide-wrapper";
+      wrapper.innerHTML = manager.renderAll();
+      app.appendChild(wrapper);
+      */
 
+      // ---- OPTION 2: render slide-by-slide ----
+      for (let i = 0; i < deck.deck.length; i++) {
         const wrapper = document.createElement("div");
         wrapper.className = "slide-wrapper";
 
-        // PURE ENGINE OUTPUT
-        const html = slide.render();
-
-        console.log(`HTML output [${index}]:`, html);
+        // no time → full slide
+        const html = manager.renderSlide(i);
 
         wrapper.innerHTML = html;
         app.appendChild(wrapper);
-      });
+      }
+
+      // ---- OPTION 3: time-based render (example) ----
+      /*
+      const wrapper = document.createElement("div");
+      wrapper.className = "slide-wrapper";
+      wrapper.innerHTML = manager.renderSlide(2, 5); // slide 2 at showAt = 5
+      app.appendChild(wrapper);
+      */
     }
 
     run().catch(err => {

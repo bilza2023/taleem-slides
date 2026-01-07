@@ -14,9 +14,11 @@ describe("twoColumnText", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("L1");
-    expect(slide.render()).toContain("R1");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("L1");
+    expect(html).toContain("R1");
   });
 
   test("throws if one side missing", () => {

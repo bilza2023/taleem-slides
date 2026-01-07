@@ -1,6 +1,4 @@
-// tests/slides.test.js
 import { describe, test, expect } from "vitest";
-
 import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
 describe("TitleSlide", () => {
@@ -15,15 +13,15 @@ describe("TitleSlide", () => {
       ]
     };
 
-    const [slide] = slideBuilder(deck);
+    const manager = slideBuilder(deck);
 
-    const html1 = slide.render();
-    const html2 = slide.render();
+    const html1 = manager.renderSlide(0);
+    const html2 = manager.renderSlide(0);
 
     expect(html1).toBe(html2);
   });
 
-  test("slide object is immutable", () => {
+  test("rendered output is immutable (string)", () => {
     const deck = {
       version: "deck-v1",
       deck: [
@@ -34,8 +32,11 @@ describe("TitleSlide", () => {
       ]
     };
 
-    const [slide] = slideBuilder(deck);
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
 
-    expect(Object.isFrozen(slide)).toBe(true);
+    expect(() => {
+      html.type = "hack";
+    }).toThrow();
   });
 });

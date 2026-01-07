@@ -11,8 +11,10 @@ describe("bigNumber", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("42");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("42");
   });
 
   test("throws without number", () => {

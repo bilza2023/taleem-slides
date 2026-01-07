@@ -11,8 +11,10 @@ describe("cornerWordsSlide", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("A");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("A");
   });
 
   test("throws without words", () => {

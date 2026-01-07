@@ -14,9 +14,11 @@ describe("titleAndSubtitle", () => {
       }]
     };
 
-    const [slide] = slideBuilder(deck);
-    expect(slide.render()).toContain("Hello");
-    expect(slide.render()).toContain("World");
+    const manager = slideBuilder(deck);
+    const html = manager.renderSlide(0);
+
+    expect(html).toContain("Hello");
+    expect(html).toContain("World");
   });
 
   test("throws on missing data", () => {

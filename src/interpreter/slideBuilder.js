@@ -1,12 +1,13 @@
 // src/interpreter/slideBuilder.js
 
 import { registry } from "../registry.js";
+import { SlideManager } from "../slideManager/SlideManager.js";
 
 /**
  * slideBuilder
  *
  * @param {object} deckV1Json - untrusted deck-v1 JSON
- * @returns {Array<Slide>} - array of immutable Slide objects
+ * @returns {SlideManager}
  *
  * @throws Error on first structural or semantic failure
  */
@@ -59,5 +60,6 @@ export function slideBuilder(deckV1Json) {
   slides.forEach(Object.freeze);
   Object.freeze(slides);
 
-  return slides;
+  // ✅ NEW: return manager, not slides
+  return new SlideManager(slides);
 }
