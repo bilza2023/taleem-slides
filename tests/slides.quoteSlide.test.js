@@ -1,28 +1,28 @@
-import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
-describe("quoteSlide", () => {
-  test("builds with quote", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "quoteSlide",
-        data: [{ name: "quote", content: "Hello" }]
-      }]
+// slides.quoteSlide.test.js
+import { describe, test, expect } from "vitest";
+import { QuoteSlide } from "../src/slides/QuoteSlide.js";
+
+describe("QuoteSlide", () => {
+  test("renders quote and author", () => {
+    const raw = {
+      type: "quoteSlide",
+      data: [
+        { name: "quote", content: "Knowledge is power" },
+        { name: "author", content: "Francis Bacon" }
+      ]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = QuoteSlide.fromJSON(raw);
+    const html = slide.render();
 
-    expect(html).toContain("Hello");
+    expect(html).toContain("Knowledge is power");
+    expect(html).toContain("Francis Bacon");
   });
 
   test("throws without quote", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "quoteSlide", data: [] }]
-      })
-    ).toThrow();
+      QuoteSlide.fromJSON({ type: "quoteSlide", data: [] })
+    ).toThrow("quoteSlide: quote required");
   });
 });

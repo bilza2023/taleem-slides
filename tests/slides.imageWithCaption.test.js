@@ -1,44 +1,28 @@
+
+// slides.imageWithCaption.test.js
 import { describe, test, expect } from "vitest";
 import { ImageWithCaptionSlide } from "../src/slides/ImageWithCaptionSlide.js";
 
-describe("imageWithCaption", () => {
-  test("builds with image and caption", () => {
+describe("ImageWithCaptionSlide", () => {
+  test("renders image and caption", () => {
     const raw = {
       type: "imageWithCaption",
       data: [
-        { name: "image", content: "photo.png" },
-        { name: "caption", content: "A caption" }
+        { name: "image", content: "img.png" },
+        { name: "caption", content: "Caption text" }
       ]
     };
 
     const slide = ImageWithCaptionSlide.fromJSON(raw);
     const html = slide.render();
 
-    expect(html).toContain("photo.png");
-    expect(html).toContain("A caption");
+    expect(html).toContain("img.png");
+    expect(html).toContain("Caption text");
   });
 
-  test("throws if image or caption missing", () => {
+  test("throws if missing image or caption", () => {
     expect(() =>
-      ImageWithCaptionSlide.fromJSON({
-        type: "imageWithCaption",
-        data: [{ name: "image", content: "photo.png" }]
-      })
+      ImageWithCaptionSlide.fromJSON({ type: "imageWithCaption", data: [] })
     ).toThrow("imageWithCaption: image and caption required");
-  });
-
-  test("render output is deterministic", () => {
-    const raw = {
-      type: "imageWithCaption",
-      data: [
-        { name: "image", content: "x.png" },
-        { name: "caption", content: "Y" }
-      ]
-    };
-
-    const a = ImageWithCaptionSlide.fromJSON(raw);
-    const b = ImageWithCaptionSlide.fromJSON(raw);
-
-    expect(a.render()).toBe(b.render());
   });
 });

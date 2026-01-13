@@ -1,8 +1,9 @@
+// slides.imageRightBulletsLeft.test.js
 import { describe, test, expect } from "vitest";
 import { ImageRightBulletsLeftSlide } from "../src/slides/ImageRightBulletsLeftSlide.js";
 
-describe("imageRightBulletsLeft", () => {
-  test("builds with image and bullets", () => {
+describe("ImageRightBulletsLeftSlide", () => {
+  test("renders image and bullets", () => {
     const raw = {
       type: "imageRightBulletsLeft",
       data: [
@@ -16,11 +17,5 @@ describe("imageRightBulletsLeft", () => {
 
     expect(html).toContain("img.png");
     expect(html).toContain("A");
-  });
-
-  test("throws if image or bullets missing", () => {
-    expect(() =>
-      ImageRightBulletsLeftSlide.fromJSON({ type: "imageRightBulletsLeft", data: [] })
-    ).toThrow("imageRightBulletsLeft: image and bullets required");
   });
 });

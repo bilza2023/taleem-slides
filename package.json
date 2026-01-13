@@ -1,8 +1,8 @@
 {
   "name": "taleem-slides",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
-  "description": "Pure slide interpretation engine for deck-v1 (no DOM, no UI)",
+  "description": "Convert json taleem schema into html for slides",
 
   "exports": {
     ".": "./src/index.js"

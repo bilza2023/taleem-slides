@@ -1,8 +1,9 @@
+// slides.donutChart.test.js
 import { describe, test, expect } from "vitest";
 import { DonutChartSlide } from "../src/slides/DonutChartSlide.js";
 
-describe("donutChart", () => {
-  test("builds with segments", () => {
+describe("DonutChartSlide", () => {
+  test("renders segments", () => {
     const raw = {
       type: "donutChart",
       data: [

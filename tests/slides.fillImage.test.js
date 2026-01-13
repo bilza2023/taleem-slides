@@ -1,28 +1,24 @@
-import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
-describe("fillImage", () => {
-  test("builds with image", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "fillImage",
-        data: [{ name: "image", content: "/bg.png" }]
-      }]
+// slides.fillImage.test.js
+import { describe, test, expect } from "vitest";
+import { FillImageSlide } from "../src/slides/FillImageSlide.js";
+
+describe("FillImageSlide", () => {
+  test("renders image", () => {
+    const raw = {
+      type: "fillImage",
+      data: [{ name: "image", content: "/img.png" }]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = FillImageSlide.fromJSON(raw);
+    const html = slide.render();
 
-    expect(html).toContain("/bg.png");
+    expect(html).toContain("/img.png");
   });
 
   test("throws without image", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "fillImage", data: [] }]
-      })
-    ).toThrow();
+      FillImageSlide.fromJSON({ type: "fillImage", data: [] })
+    ).toThrow("fillImage: image required");
   });
 });

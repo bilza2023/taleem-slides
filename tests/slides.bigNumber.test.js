@@ -1,28 +1,28 @@
-import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
-describe("bigNumber", () => {
-  test("builds with number", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "bigNumber",
-        data: [{ name: "number", content: 42 }]
-      }]
+// slides.bigNumber.test.js
+import { describe, test, expect } from "vitest";
+import { BigNumberSlide } from "../src/slides/BigNumberSlide.js";
+
+describe("BigNumberSlide", () => {
+  test("renders number and label", () => {
+    const raw = {
+      type: "bigNumber",
+      data: [
+        { name: "number", content: 42 },
+        { name: "label", content: "Students" }
+      ]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = BigNumberSlide.fromJSON(raw);
+    const html = slide.render();
 
     expect(html).toContain("42");
+    expect(html).toContain("Students");
   });
 
   test("throws without number", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "bigNumber", data: [] }]
-      })
-    ).toThrow();
+      BigNumberSlide.fromJSON({ type: "bigNumber", data: [] })
+    ).toThrow("bigNumber: number required");
   });
 });

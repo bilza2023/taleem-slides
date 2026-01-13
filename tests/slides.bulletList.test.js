@@ -1,32 +1,31 @@
-import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
-describe("bulletList", () => {
-  test("builds with bullets", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "bulletList",
-        data: [
-          { name: "bullet", content: "A" },
-          { name: "bullet", content: "B" }
-        ]
-      }]
+// slides.bulletList.test.js
+import { describe, test, expect } from "vitest";
+import { BulletListSlide } from "../src/slides/BulletListSlide.js";
+
+describe("BulletListSlide", () => {
+  test("renders bullets with state", () => {
+    const raw = {
+      type: "bulletList",
+      data: [
+        { name: "bullet", content: "A" },
+        { name: "bullet", content: "B" },
+        { name: "bullet", content: "C" }
+      ]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = BulletListSlide.fromJSON(raw);
+    const html = slide.render({ visibleCount: 2, activeIndex: 1 });
 
     expect(html).toContain("A");
     expect(html).toContain("B");
+    expect(html).not.toContain("C");
+    expect(html).toContain("is-active");
   });
 
-  test("throws with no bullets", () => {
+  test("throws without bullets", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "bulletList", data: [] }]
-      })
-    ).toThrow();
+      BulletListSlide.fromJSON({ type: "bulletList", data: [] })
+    ).toThrow("bulletList: requires at least one bullet");
   });
 });

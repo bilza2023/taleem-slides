@@ -1,21 +1,24 @@
+
+// slides.eq.test.js
 import { describe, test, expect } from "vitest";
 import { EqSlide } from "../src/slides/EqSlide.js";
 
-describe("eq", () => {
-  test("renders equations", () => {
+describe("EqSlide", () => {
+  test("renders equations with active index", () => {
     const raw = {
       type: "eq",
       data: [
-        { content: "a + b = c" },
-        { content: "x = y" }
+        { content: "a+b=c" },
+        { content: "x=y" }
       ]
     };
 
     const slide = EqSlide.fromJSON(raw);
-    const html = slide.render();
+    const html = slide.render({ activeIndex: 1 });
 
-    expect(html).toContain("a + b = c");
-    expect(html).toContain("x = y");
+    expect(html).toContain("a+b=c");
+    expect(html).toContain("x=y");
+    expect(html).toContain("is-active");
   });
 
   test("throws if data is not array", () => {

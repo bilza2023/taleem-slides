@@ -1,41 +1,23 @@
-// src/slides/TitleSlide.js
 
-/**
- * TitleSlide
- * Private implementation – not exported publicly
- */
+// TitleSlide.js
 export const TitleSlide = {
-    type: "titleSlide",
-  
-    /**
-     * Build a TitleSlide from raw deck JSON
-     */
-    fromJSON(rawSlide, index) {
-      if (!Array.isArray(rawSlide.data)) {
-        throw new Error(`TitleSlide: data must be an array`);
+  type: "titleSlide",
+
+  fromJSON(raw) {
+    const title = raw.data?.find(d => d.name === "title")?.content;
+    if (!title) throw new Error("titleSlide: title required");
+
+    return Object.freeze({
+      type: "titleSlide",
+      title,
+
+      render() {
+        return `
+          <section class="slide titleSlide">
+            <h1>${title}</h1>
+          </section>
+        `;
       }
-  
-      const titleItem = rawSlide.data.find(d => d.name === "title");
-  
-      if (!titleItem || typeof titleItem.content !== "string") {
-        throw new Error(`TitleSlide: missing or invalid title content`);
-      }
-  
-      const title = titleItem.content;
-  
-      // immutable slide object
-      return Object.freeze({
-        type: "titleSlide",
-  
-        render() {
-          return `
-            <div class="slide titleSlide">
-              <h1>${title}</h1>
-            </div>
-          `;
-        }
-        
-      });
-    }
-  };
-  
+    });
+  }
+};

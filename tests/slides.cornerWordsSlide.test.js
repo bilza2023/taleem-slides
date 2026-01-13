@@ -1,28 +1,24 @@
-import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
-describe("cornerWordsSlide", () => {
-  test("builds with words", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "cornerWordsSlide",
-        data: [{ name: "word", content: "A" }]
-      }]
+// slides.cornerWordsSlide.test.js
+import { describe, test, expect } from "vitest";
+import { CornerWordsSlide } from "../src/slides/CornerWordsSlide.js";
+
+describe("CornerWordsSlide", () => {
+  test("renders words", () => {
+    const raw = {
+      type: "cornerWordsSlide",
+      data: [{ name: "word", content: "A" }]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = CornerWordsSlide.fromJSON(raw);
+    const html = slide.render();
 
     expect(html).toContain("A");
   });
 
   test("throws without words", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "cornerWordsSlide", data: [] }]
-      })
-    ).toThrow();
+      CornerWordsSlide.fromJSON({ type: "cornerWordsSlide", data: [] })
+    ).toThrow("cornerWordsSlide: requires at least one word");
   });
 });

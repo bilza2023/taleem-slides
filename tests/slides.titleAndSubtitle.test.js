@@ -1,21 +1,18 @@
 import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
+import { TitleAndSubtitleSlide } from "../src/slides/TitleAndSubtitleSlide.js";
 
-describe("titleAndSubtitle", () => {
+describe("TitleAndSubtitleSlide", () => {
   test("builds successfully", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "titleAndSubtitle",
-        data: [
-          { name: "title", content: "Hello" },
-          { name: "subtitle", content: "World" }
-        ]
-      }]
+    const raw = {
+      type: "titleAndSubtitle",
+      data: [
+        { name: "title", content: "Hello" },
+        { name: "subtitle", content: "World" }
+      ]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = TitleAndSubtitleSlide.fromJSON(raw);
+    const html = slide.render();
 
     expect(html).toContain("Hello");
     expect(html).toContain("World");
@@ -23,10 +20,10 @@ describe("titleAndSubtitle", () => {
 
   test("throws on missing data", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "titleAndSubtitle", data: [] }]
+      TitleAndSubtitleSlide.fromJSON({
+        type: "titleAndSubtitle",
+        data: []
       })
-    ).toThrow();
+    ).toThrow("titleAndSubtitle: requires title and subtitle");
   });
 });

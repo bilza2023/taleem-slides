@@ -1,35 +1,29 @@
+// tests/slides.titleAndPara.test.js
 import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
+import { TitleAndParaSlide } from "../src/slides/TitleAndParaSlide.js";
 
-describe("titleAndPara", () => {
-  test("builds successfully", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "titleAndPara",
-        data: [
-          { name: "title", content: "Heading" },
-          { name: "para", content: "Paragraph" }
-        ]
-      }]
-    };
+describe("TitleAndParaSlide", () => {
+  test("renders title and paragraph", () => {
+    const slide = TitleAndParaSlide.fromJSON({
+      type: "titleAndPara",
+      data: [
+        { name: "title", content: "Hello" },
+        { name: "para", content: "World" }
+      ]
+    });
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const html = slide.render();
 
-    expect(html).toContain("Heading");
-    expect(html).toContain("Paragraph");
+    expect(html).toContain("Hello");
+    expect(html).toContain("World");
   });
 
-  test("throws on missing para", () => {
+  test("throws if title or para missing", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{
-          type: "titleAndPara",
-          data: [{ name: "title", content: "X" }]
-        }]
+      TitleAndParaSlide.fromJSON({
+        type: "titleAndPara",
+        data: []
       })
-    ).toThrow();
+    ).toThrow("titleAndPara: requires title and para");
   });
 });

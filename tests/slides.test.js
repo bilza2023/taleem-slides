@@ -1,42 +1,28 @@
+// tests/slides.test.js
 import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
+import { getSlideTemplate } from "../src/getSlideTemplate.js";
 
-describe("TitleSlide", () => {
-  test("render() is deterministic", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [
-        {
-          type: "titleSlide",
-          data: [{ name: "title", content: "Deterministic" }]
-        }
-      ]
-    };
+describe("taleem-slides public API", () => {
+  test("getSlideTemplate returns a template with fromJSON", () => {
+    const tpl = getSlideTemplate("titleSlide");
+    expect(typeof tpl.fromJSON).toBe("function");
+  });
 
-    const manager = slideBuilder(deck);
+  test("render output is deterministic", () => {
+    const TitleSlide = getSlideTemplate("titleSlide");
 
-    const html1 = manager.renderSlide(0);
-    const html2 = manager.renderSlide(0);
+    const slide = TitleSlide.fromJSON({
+      type: "titleSlide",
+      data: [{ name: "title", content: "Deterministic" }]
+    });
+
+    const html1 = slide.render();
+    const html2 = slide.render();
 
     expect(html1).toBe(html2);
   });
 
-  test("rendered output is immutable (string)", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [
-        {
-          type: "titleSlide",
-          data: [{ name: "title", content: "Frozen" }]
-        }
-      ]
-    };
-
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
-
-    expect(() => {
-      html.type = "hack";
-    }).toThrow();
+  test("throws on unknown slide type", () => {
+    expect(() => getSlideTemplate("does-not-exist")).toThrow();
   });
 });

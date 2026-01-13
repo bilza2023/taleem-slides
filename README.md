@@ -1,224 +1,247 @@
 
 # 📦 taleem-slides
 
-> **Deterministic slide interpretation & rendering engine for deck-v1**
+## ⚠️  Warning :  Work in Progress — expect breaking changes
 
-`taleem-slides` is a **pure, test-locked rendering layer**.
-It takes a validated `deck-v1` JSON and produces **deterministic HTML output** through a strict public API.
+> **Pure slide template library for Taleem decks**
 
-This project does **not**:
+`taleem-slides` is a **simple, deterministic template library** that turns
+**deck-style slide JSON** into **HTML**.
+
+It does **one thing only**:
+
+> **Given slide data + render state → return HTML**
+
+It does **not** manage time, indexes, playback, or decks.
+
+---
+
+## 🌐 Live Display Center (Important)
+
+👉 **Official live display & reference implementation**
+**[https://bilza2023.github.io/taleem/](https://bilza2023.github.io/taleem/)**
+
+This is **not a mock demo**.This link is the **active display center** where:
+
+- slide templates are rendered in real browsers
+- visual behavior is validated
+- browser/player integration is tested
+---
+
+## ✨ Taleem.help Philosophy
+
+**Taleem.help** is an educational technology initiative focused on making
+**content-first learning tools**.
+
+The goal of the `taleem-*` libraries is simple:
+
+> Enable educators to create **JSON-based presentations**
+> and display them online using **free, open tools**.
+
+Key ideas:
+
+* Slides already encode *layout + structure*
+* Users provide **content only**
+* There are **no configuration knobs**
+* What you see is what the template decides
+
+This removal of choice is **intentional**.
+
+It makes the system:
+
+* easy to learn
+* hard to misuse
+* consistent across platforms
+
+If a different layout is needed, the solution is **not configuration** —
+it is **a new slide template**.
+
+Templates are cheap.
+Even hundreds of templates add no runtime cost.
+
+---
+
+## ✨ What this library is
+
+* A collection of **slide templates**
+* Each template:
+
+  * reads slide JSON
+  * renders HTML
+  * applies CSS classes based on a given state
+* Fully **stateless** and **pure**
+
+Think of it as:
+
+> *Handlebars / JSX for Taleem slides*
+
+---
+
+## ❌ What this library is NOT
+
+`taleem-slides` does **not**:
 
 * build decks
+* validate full decks
+* manage timing (`showAt`)
+* decide which slide is active
+* manage playback
 * mutate data
-* manage timing state
-* expose slide internals
 
-It only **interprets** and **renders**.
+All of that belongs elsewhere.
 
 ---
 
 ## 🧠 Mental Model
 
 ```
-deck-v1 JSON
-   ↓
-slideBuilder()
-   ↓
-SlideManager
-   ↓
-renderSlide(index [, showAt])
+slide JSON + render state
+        ↓
+   slide template
+        ↓
+       HTML
 ```
 
-Key idea:
-**Slides are private. Rendering is the only contract.**
+How the state is calculated is **not this library’s concern**.
 
 ---
 
-## ✅ What This Project Guarantees
+## 📦 Installation
 
-* Deterministic rendering (same input → same HTML)
-* Strict validation per slide type
-* Zero mutation after build
-* No access to internal slide objects
-* Full test coverage across all slide types
+```bash
+npm install taleem-slides
+```
 
 ---
 
-## 🔑 Public API
+## 🚀 Basic Usage
 
-### `slideBuilder(deckV1Json) → SlideManager`
-
-Builds and validates a deck, returning a `SlideManager`.
+### 1️⃣ Import a template
 
 ```js
-import { slideBuilder } from "taleem-slides";
-
-const manager = slideBuilder(deckJson);
+import { getSlideTemplate } from "taleem-slides";
 ```
-
-Throws immediately on:
-
-* invalid deck structure
-* unsupported slide types
-* invalid slide data
 
 ---
 
-### `SlideManager.renderSlide(index, showAt?) → string`
-
-Renders **one slide** to HTML.
+### 2️⃣ Load slide data (once)
 
 ```js
-const html = manager.renderSlide(0);
+const SlideTemplate = getSlideTemplate("bulletList");
+
+const slide = SlideTemplate.fromJSON({
+  type: "bulletList",
+  data: [
+    { name: "bullet", content: "First point" },
+    { name: "bullet", content: "Second point" },
+    { name: "bullet", content: "Third point" }
+  ]
+});
 ```
 
-Notes:
-
-* `index` is zero-based
-* `showAt` is optional (for time-aware slides)
-* return value is **plain HTML string**
+> `fromJSON()` only **reads and stores structure**.
+> No timing. No logic.
 
 ---
 
-### `SlideManager.renderAll() → string`
-
-Renders **all slides** as a static HTML dump.
+### 3️⃣ Render with state
 
 ```js
-const fullHtml = manager.renderAll();
+const html = slide.render({
+  visibleCount: 2,
+  activeIndex: 1
+});
 ```
 
----
+This will:
 
-## 🔒 Encapsulation Rules (By Design)
-
-* `SlideManager` does **not** expose slides
-* Slides are frozen internally
-* Rendered output is a string (immutable by nature)
-
-If you want to *inspect structure*, that belongs in **taleem-core**, not here.
+* render first 2 bullets
+* highlight the second bullet
+* dim the first
 
 ---
 
-## 🧪 Testing Philosophy
+## 🎨 Render State Contract
 
-This project has **56 passing tests** covering:
+Templates accept a **render state object**.
 
-* slideBuilder validation
-* every slide type
-* deterministic rendering
-* error handling
-* edge cases
+Common fields:
 
-Tests assert **behavior**, not snapshots.
+```ts
+{
+  visibleCount?: number; // how many items exist
+  activeIndex?: number;  // which item is highlighted
+}
+```
 
-This test suite is the **living specification**.
-
----
-
-## 🎞️ Supported Slide Types
-
-`taleem-slides` supports all canonical `deck-v1` slide types, including:
-
-* titleSlide
-* titleAndSubtitle
-* titleAndPara
-* bulletList
-* twoColumnText
-* imageSlide
-* imageWithTitle
-* imageWithCaption
-* imageLeftBulletsRight
-* imageRightBulletsLeft
-* table
-* statistic
-* donutChart
-* barChart
-* bigNumber
-* quoteSlide
-* quoteWithImage
-* cornerWordsSlide
-* contactSlide
-* fillImage
-* eq
-* svgPointer
-
-All validation rules are enforced at build time.
+Slides may choose to use one or both.
 
 ---
 
-## 🧊 Versioning & Stability
+## 🎯 Class Name Contract
 
-* This project targets **deck-v1 only**
-* No breaking changes without `deck-v2`
-* Rendering output is intentionally simple HTML
-* Styling is the responsibility of the consuming app
+Templates apply **standard class names only**:
 
----
+```text
+.is-active
+.is-dim
+.is-hidden
+```
 
-## 📍 When to Use This
-
-Use `taleem-slides` when you want:
-
-* a **trustworthy rendering engine**
-* clean separation from content generation
-* confidence that slides behave exactly as specified
-
-Do **not** use it for:
-
-* authoring decks
-* editing slides
-* managing playback state
+Styling is handled entirely by the consuming app.
 
 ---
 
----
+## 🧭 How this fits in the ecosystem
 
-# 🧠 taleem-core (Contextual Overview)
+`taleem-slides` is intentionally **small** and **focused**.
 
-> **Authoring & specification layer for deck-v1**
+It is used by higher-level projects:
 
-`taleem-core` is responsible for **creating valid decks**.
-`taleem-slides` is responsible for **rendering them**.
+### 🧩 Sister Projects
 
-They are intentionally separate.
+* **taleem-browser**
+  Index-based slide viewer (manual navigation)
 
----
+* **taleem-player**
+  Time-based slide player (audio / video synced)
 
-## Responsibility Split
+Both projects:
 
-| Concern             | taleem-core | taleem-slides |
-| ------------------- | ----------- | ------------- |
-| Deck creation       | ✅           | ❌             |
-| Schema validation   | ✅           | ❌             |
-| EQ expansion        | ✅           | ❌             |
-| Timing rules        | ✅           | ❌             |
-| Rendering HTML      | ❌           | ✅             |
-| Slide encapsulation | ❌           | ✅             |
+* compute render state (`activeIndex`, `visibleCount`)
+* pass it to `taleem-slides`
+* receive consistent HTML output
 
 ---
 
-## Core Artifacts
+## 🧪 Demo & Reference Projects
 
-From the docs you uploaded:
+* 🌐 **Live Display Center**
+  [https://bilza2023.github.io/taleem/](https://bilza2023.github.io/taleem/)
 
-* `api.md` → defines **deck-v1 contract**
-* `eq.md` → defines **EQ slide expansion rules**
-* `timings.md` → defines **global timing semantics**
-
-`taleem-slides` **trusts** these documents.
-It does not reinterpret them.
+* 📁 **GitHub Demo / Playground**
+  *(link can be added here when ready)*
 
 ---
 
-## Architectural Law (Important)
+## 🧊 Stability & Versioning
 
-> **Authoring and rendering must never mix**
+* Targets **deck-v1**
+* Breaking changes allowed during WIP phase
+* HTML output is intentionally simple and predictable
 
-Once a deck enters `taleem-slides`, it is:
+---
 
-* assumed valid
-* treated as immutable
-* rendered deterministically
+## 🧠 Design Principle (Locked)
 
-This is why the system scales cleanly.
+> **taleem-slides renders HTML.
+> It does not decide *when* or *why*.**
+
+---
+
+If you want, next logical steps are:
+
+* rewrite one slide as the **canonical reference**
+* or update taleem-browser to consume the new API cleanly
+
+This README now correctly **anchors the entire ecosystem**.

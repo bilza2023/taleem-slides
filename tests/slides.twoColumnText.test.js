@@ -1,21 +1,18 @@
 import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
+import { TwoColumnTextSlide } from "../src/slides/TwoColumnTextSlide.js";
 
-describe("twoColumnText", () => {
+describe("TwoColumnTextSlide", () => {
   test("builds with left and right", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "twoColumnText",
-        data: [
-          { name: "left", content: "L1" },
-          { name: "right", content: "R1" }
-        ]
-      }]
+    const raw = {
+      type: "twoColumnText",
+      data: [
+        { name: "left", content: "L1" },
+        { name: "right", content: "R1" }
+      ]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = TwoColumnTextSlide.fromJSON(raw);
+    const html = slide.render();
 
     expect(html).toContain("L1");
     expect(html).toContain("R1");
@@ -23,13 +20,10 @@ describe("twoColumnText", () => {
 
   test("throws if one side missing", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{
-          type: "twoColumnText",
-          data: [{ name: "left", content: "Only" }]
-        }]
+      TwoColumnTextSlide.fromJSON({
+        type: "twoColumnText",
+        data: [{ name: "left", content: "Only" }]
       })
-    ).toThrow();
+    ).toThrow("twoColumnText: requires left and right columns");
   });
 });

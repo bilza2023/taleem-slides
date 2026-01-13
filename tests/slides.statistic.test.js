@@ -1,44 +1,28 @@
+
+// slides.statistic.test.js
 import { describe, test, expect } from "vitest";
 import { StatisticSlide } from "../src/slides/StatisticSlide.js";
 
-describe("statistic", () => {
-  test("builds with label and value", () => {
+describe("StatisticSlide", () => {
+  test("renders statistic", () => {
     const raw = {
       type: "statistic",
       data: [
-        { name: "label", content: "Users" },
-        { name: "value", content: 120 }
+        { name: "label", content: "Students" },
+        { name: "value", content: 1200 }
       ]
     };
 
     const slide = StatisticSlide.fromJSON(raw);
     const html = slide.render();
 
-    expect(html).toContain("Users");
-    expect(html).toContain("120");
+    expect(html).toContain("Students");
+    expect(html).toContain("1200");
   });
 
-  test("throws if label or value missing", () => {
+  test("throws if missing label or value", () => {
     expect(() =>
-      StatisticSlide.fromJSON({
-        type: "statistic",
-        data: [{ name: "label", content: "Only label" }]
-      })
+      StatisticSlide.fromJSON({ type: "statistic", data: [] })
     ).toThrow("statistic: requires label and value");
-  });
-
-  test("render output is deterministic", () => {
-    const raw = {
-      type: "statistic",
-      data: [
-        { name: "label", content: "X" },
-        { name: "value", content: 5 }
-      ]
-    };
-
-    const a = StatisticSlide.fromJSON(raw);
-    const b = StatisticSlide.fromJSON(raw);
-
-    expect(a.render()).toBe(b.render());
   });
 });

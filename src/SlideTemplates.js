@@ -27,7 +27,7 @@ import { ContactSlide } from "./slides/ContactSlide.js";
 import { EqSlide } from "./slides/EqSlide.js";
 import { SvgPointerSlide } from "./slides/SvgPointerSlide.js";
 
-export const registry = {
+export const SlideTemplates = {
   titleSlide: TitleSlide,
   titleAndSubtitle: TitleAndSubtitleSlide,
   titleAndPara: TitleAndParaSlide,

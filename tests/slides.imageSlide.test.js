@@ -1,28 +1,25 @@
-import { describe, test, expect } from "vitest";
-import { slideBuilder } from "../src/interpreter/slideBuilder.js";
 
-describe("imageSlide", () => {
-  test("builds with image", () => {
-    const deck = {
-      version: "deck-v1",
-      deck: [{
-        type: "imageSlide",
-        data: [{ name: "image", content: "/img.png" }]
-      }]
+
+// slides.imageSlide.test.js
+import { describe, test, expect } from "vitest";
+import { ImageSlide } from "../src/slides/ImageSlide.js";
+
+describe("ImageSlide", () => {
+  test("renders image", () => {
+    const raw = {
+      type: "imageSlide",
+      data: [{ name: "image", content: "img.png" }]
     };
 
-    const manager = slideBuilder(deck);
-    const html = manager.renderSlide(0);
+    const slide = ImageSlide.fromJSON(raw);
+    const html = slide.render();
 
-    expect(html).toContain("/img.png");
+    expect(html).toContain("img.png");
   });
 
   test("throws without image", () => {
     expect(() =>
-      slideBuilder({
-        version: "deck-v1",
-        deck: [{ type: "imageSlide", data: [] }]
-      })
-    ).toThrow();
+      ImageSlide.fromJSON({ type: "imageSlide", data: [] })
+    ).toThrow("imageSlide: image required");
   });
 });
