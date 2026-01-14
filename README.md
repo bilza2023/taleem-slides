@@ -1,7 +1,8 @@
 
+
 # 📦 taleem-slides
 
-## ⚠️  Warning :  Work in Progress — expect breaking changes
+## ⚠️ Warning: Work in Progress — expect breaking changes
 
 > **Pure slide template library for Taleem decks**
 
@@ -21,11 +22,13 @@ It does **not** manage time, indexes, playback, or decks.
 👉 **Official live display & reference implementation**
 **[https://bilza2023.github.io/taleem/](https://bilza2023.github.io/taleem/)**
 
-This is **not a mock demo**.This link is the **active display center** where:
+This is **not a mock demo**.
+This link is the **active display center** where:
 
-- slide templates are rendered in real browsers
-- visual behavior is validated
-- browser/player integration is tested
+* slide templates are rendered in real browsers
+* visual behavior is validated
+* browser / player integration is tested
+
 ---
 
 ## ✨ Taleem.help Philosophy
@@ -38,7 +41,7 @@ The goal of the `taleem-*` libraries is simple:
 > Enable educators to create **JSON-based presentations**
 > and display them online using **free, open tools**.
 
-Key ideas:
+### Key ideas
 
 * Slides already encode *layout + structure*
 * Users provide **content only**
@@ -239,9 +242,122 @@ Both projects:
 
 ---
 
-If you want, next logical steps are:
+## 🔳 Deck Background Support (NEW)
 
-* rewrite one slide as the **canonical reference**
-* or update taleem-browser to consume the new API cleanly
+`taleem-slides` also defines **how deck backgrounds are resolved**, while remaining fully **DOM-agnostic**.
 
-This README now correctly **anchors the entire ecosystem**.
+A deck background is **optional** and applies to the **entire deck**, not individual slides.
+
+---
+
+### Background responsibility split
+
+#### taleem-slides
+
+* decides **what background should be used**
+* exposes a **pure resolver function**
+* returns **plain background data**
+
+#### player / browser
+
+* renders the background into the DOM
+* applies styles and layout
+* handles mounting and lifecycle
+
+This keeps slide rendering **pure and portable**.
+
+---
+
+## 🎨 Background Resolution API
+
+`taleem-slides` exports a small helper:
+
+```js
+import { resolveBackground } from "taleem-slides";
+```
+
+### Purpose
+
+`resolveBackground` answers one question only:
+
+> **“What background should be used for this deck?”**
+
+It does **not**:
+
+* touch the DOM
+* inject styles
+* manage themes
+* animate or time anything
+
+---
+
+### Input (conceptual)
+
+```ts
+{
+  deckBackground?: {
+    backgroundColor?: string
+    backgroundImage?: string
+    backgroundImageOpacity?: number
+  },
+  themeSurfaceColor?: string
+}
+```
+
+---
+
+### Output
+
+```ts
+{
+  backgroundColor?: string
+  backgroundImage?: string
+  backgroundImageOpacity?: number
+}
+```
+
+---
+
+### Resolution rules (locked)
+
+* If the deck defines a background → **use it**
+* Otherwise → **fall back to the theme’s surface color**
+
+These rules are **format-level guarantees**, not rendering behavior.
+
+---
+
+## 🧠 Mental Model (Updated)
+
+```
+deck JSON + render state + theme surface
+        ↓
+   taleem-slides
+        ↓
+HTML + resolved background data
+        ↓
+player / browser
+        ↓
+        DOM
+```
+
+`taleem-slides` decides **what exists**.
+The player / browser decides **how it appears**.
+
+---
+
+## 🔒 Design Principle (Extended)
+
+> **taleem-slides renders HTML and resolves deck-level intent.
+> It never touches the DOM and never manages playback.**
+
+---
+
+## ✅ What this achieves
+
+* background rules are centralized
+* players remain simple
+* browsers stay dumb
+* future renderers (CLI, SSR, export) stay possible
+
+---
