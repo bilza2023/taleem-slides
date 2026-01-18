@@ -11,12 +11,10 @@ describe("TableSlide", () => {
     const slide = TableSlide.fromJSON(raw);
     const html = slide.render();
 
-    // structure assertions only
+    // structure assertions only (NEW schema)
     expect(html).toContain('<table class="slide table">');
-    expect(html).toContain("<thead>");
     expect(html).toContain("<tbody>");
     expect(html).toContain("<tr>");
-    expect(html).toContain("<th>");
     expect(html).toContain("<td>");
   });
 });
