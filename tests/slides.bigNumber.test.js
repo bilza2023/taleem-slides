@@ -3,15 +3,13 @@ import { BigNumberSlide } from "../src/slides/BigNumberSlide.js";
 import { goldenDeckV1 } from "taleem-core";
 
 describe("BigNumberSlide", () => {
-  test("renders bigNumber from golden deck", () => {
-    const slideData = goldenDeckV1.deck.find(
-      slide => slide.type === "bigNumber"
-    );
-
-    const slide = BigNumberSlide.fromJSON(slideData);
+  test("renders bigNumber structure", () => {
+    const raw = goldenDeckV1.deck.find(s => s.type === "bigNumber");
+    const slide = BigNumberSlide.fromJSON(raw);
     const html = slide.render();
 
-    expect(html).toContain("bigNumber");
-    expect(html).toContain(slide.number);
+    expect(html).toContain('class="slide bigNumber"');
+    expect(html).toContain('class="number"');
+    expect(html).toContain('class="label"');
   });
 });

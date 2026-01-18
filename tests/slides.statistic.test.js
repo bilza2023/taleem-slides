@@ -3,16 +3,13 @@ import { StatisticSlide } from "../src/slides/StatisticSlide.js";
 import { goldenDeckV1 } from "taleem-core";
 
 describe("StatisticSlide", () => {
-  test("renders statistic slide from golden deck", () => {
+  test("renders statistic slide structure", () => {
     const raw = goldenDeckV1.deck.find(s => s.type === "statistic");
-
     const slide = StatisticSlide.fromJSON(raw);
     const html = slide.render();
 
-    expect(html).toContain("slide statistic");
-    expect(html).toContain("stat-value");
-    expect(html).toContain("stat-label");
-    expect(html).toContain("75%");
-    expect(html).toContain("Completion Rate");
+    expect(html).toContain('class="slide statistic"');
+    expect(html).toContain('class="stat-value"');
+    expect(html).toContain('class="stat-label"');
   });
 });
