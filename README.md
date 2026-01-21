@@ -10,7 +10,7 @@ No player.
 No timing.
 No DOM.
 Just HTML.
-
+> Assumes slide JSON is already validated by upstream tools.
 ---
 
 ## 🌐 Live Reference (Authoritative)
