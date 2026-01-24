@@ -1,4 +1,3 @@
-
 export const EqSlide = {
   type: "eq",
 
@@ -18,19 +17,25 @@ export const EqSlide = {
       type: "eq",
       lines,
 
-      render({ visibleCount = lines.length, activeIndex = null } = {}) {
+      render({ visibleCount = lines.length } = {}) {
         return `
           <section class="slide eq">
-            ${lines.map((l, i) => {
-              if (i >= visibleCount) return "";
-              const cls =
-                i === activeIndex
-                  ? "is-active"
-                  : activeIndex !== null && i < activeIndex
-                  ? "is-dim"
-                  : "";
-              return `<div class="eq-line ${cls}">${l.content}</div>`;
-            }).join("")}
+            <div class="eq-layout">
+
+              <div class="eq-left">
+                ${lines
+                  .slice(0, visibleCount)
+                  .map(l => `
+                    <div class="eq-line eq-${l.type}">
+                      ${l.content}
+                    </div>
+                  `)
+                  .join("")}
+              </div>
+
+              <div class="eq-right"></div>
+
+            </div>
           </section>
         `;
       }
