@@ -1,7 +1,7 @@
 import { describe, test, expect } from "vitest";
 import { EqSlide } from "../src/slides/EqSlide.js";
 
-describe("EqSlide", () => {
+describe("EqSlide (v1 bounded)", () => {
   const rawEqSlide = {
     type: "eq",
     start: 90,
@@ -9,15 +9,31 @@ describe("EqSlide", () => {
     data: [
       {
         name: "line",
-        type: "heading",
-        content: "Eq Slide - under construction",
+        content: "First line",
         showAt: 90
       },
       {
         name: "line",
-        type: "math",
-        content: "render(data) ⇒ same output",
-        showAt: 91
+        content: "Second line",
+        showAt: 91,
+        spItems: [
+          { type: "spText", content: "Sidebar for second line" }
+        ]
+      },
+      {
+        name: "line",
+        content: "Third line",
+        showAt: 92
+      },
+      {
+        name: "line",
+        content: "Fourth line",
+        showAt: 93
+      },
+      {
+        name: "line",
+        content: "Fifth line",
+        showAt: 94
       }
     ]
   };
@@ -26,12 +42,11 @@ describe("EqSlide", () => {
     const slide = EqSlide.fromJSON(rawEqSlide);
 
     expect(slide.type).toBe("eq");
-    expect(slide.lines.length).toBe(2);
-    expect(slide.lines[0].content).toBe("Eq Slide - under construction");
-    expect(slide.lines[1].content).toBe("render(data) ⇒ same output");
+    expect(slide.lines.length).toBe(5);
+    expect(slide.lines[1].content).toBe("Second line");
   });
 
-  test("renders eq layout with left and right panels", () => {
+  test("renders base eq layout", () => {
     const slide = EqSlide.fromJSON(rawEqSlide);
     const html = slide.render();
 
@@ -41,29 +56,56 @@ describe("EqSlide", () => {
     expect(html).toContain('class="eq-right"');
   });
 
-  test("renders all lines inside left panel only", () => {
+  test("respects visibleCount (time-based reveal)", () => {
     const slide = EqSlide.fromJSON(rawEqSlide);
-    const html = slide.render();
+    const html = slide.render({ visibleCount: 2 });
 
-    const leftIndex = html.indexOf("eq-left");
-    const rightIndex = html.indexOf("eq-right");
-
-    expect(leftIndex).toBeGreaterThan(-1);
-    expect(rightIndex).toBeGreaterThan(leftIndex);
-
-    expect(html).toContain("Eq Slide - under construction");
-    expect(html).toContain("render(data) ⇒ same output");
+    expect(html).toContain("First line");
+    expect(html).toContain("Second line");
+    expect(html).not.toContain("Third line");
   });
 
-  test("respects visibleCount", () => {
+  test("highlights active line", () => {
     const slide = EqSlide.fromJSON(rawEqSlide);
-    const html = slide.render({ visibleCount: 1 });
+    const html = slide.render({
+      visibleCount: 2,
+      activeIndex: 1
+    });
 
-    expect(html).toContain("Eq Slide - under construction");
-    expect(html).not.toContain("render(data) ⇒ same output");
+    expect(html).toContain("eq-line is-active");
+    expect(html).toContain("Second line");
   });
 
-  test("throws error when no lines exist", () => {
+  test("renders sidebar content from spItems of active line", () => {
+    const slide = EqSlide.fromJSON(rawEqSlide);
+    const html = slide.render({
+      visibleCount: 2,
+      activeIndex: 1
+    });
+
+    expect(html).toContain("Sidebar for second line");
+  });
+
+  test("drops old lines when window size exceeded", () => {
+    const slide = EqSlide.fromJSON(rawEqSlide);
+
+    // WINDOW_SIZE = 4, visibleCount = 5
+    const html = slide.render({
+      visibleCount: 5,
+      activeIndex: 4
+    });
+
+    // First line should be dropped
+    expect(html).not.toContain("First line");
+
+    // Last four should exist
+    expect(html).toContain("Second line");
+    expect(html).toContain("Third line");
+    expect(html).toContain("Fourth line");
+    expect(html).toContain("Fifth line");
+  });
+
+  test("throws error when no eq lines exist", () => {
     expect(() =>
       EqSlide.fromJSON({
         type: "eq",
