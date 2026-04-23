@@ -1,10 +1,10 @@
 
-import { extractTimeline } from "../helpers/extractTimeline.js";
-import { buildSequentialStates } from "../helpers/buildSequentialStates.js";
+
+import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function BulletListSlide(data) {
-  const rawItems = data.data ?? [];
+  const rawItems = data.data ?? []; //lingering deck.deck i think 
 
   const items = addIdToItems(rawItems);
 
@@ -16,8 +16,7 @@ export function BulletListSlide(data) {
   }
 
   const allIds = items.map(i => i.id);
-  const timeline = extractTimeline(items);
-  const actions = buildSequentialStates(timeline, allIds);
+  const actions = progressiveReveal(allIds);
 
   const html = `
     <section class="slide bulletList">

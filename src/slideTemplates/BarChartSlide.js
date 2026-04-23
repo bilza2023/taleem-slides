@@ -1,18 +1,14 @@
-import { extractTimeline } from "../renders/extractTimeline.js";
-import { buildSequentialStates } from "../renders/buildSequentialStates.js";
+import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function BarChartSlide(data) {
-  function getSp(item, name) {
-    return item.spItems?.find(sp => sp.name === name)?.content;
-  }
-
   const rawItems = data.data ?? [];
+
   const items = addIdToItems(rawItems);
 
   const bars = items.filter(d => d.name === "bar");
 
-  if (!bars.length) {
+  if (bars.length === 0) {
     return {
       html: `<section class="slide barChart"></section>`,
       actions: [],
@@ -24,13 +20,12 @@ export function BarChartSlide(data) {
   }
 
   const allIds = items.map(i => i.id);
-  const timeline = extractTimeline(items);
-  const actions = buildSequentialStates(timeline, allIds);
+  const actions = progressiveReveal(allIds);
 
   const barsData = bars.map(d => ({
     id: d.id,
-    label: d.content,
-    value: Number(getSp(d, "value")),
+    label: d.label,
+    value: Number(d.value),
     classes: d.classes || ""
   }));
 

@@ -1,5 +1,4 @@
-import { extractTimeline } from "../renders/extractTimeline.js";
-import { buildSequentialStates } from "../renders/buildSequentialStates.js";
+import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TwoColumnTextSlide(data) {
@@ -20,8 +19,7 @@ export function TwoColumnTextSlide(data) {
   }
 
   const allIds = items.map(i => i.id);
-  const timeline = extractTimeline(items);
-  const actions = buildSequentialStates(timeline, allIds);
+  const actions = progressiveReveal(allIds);
 
   function renderItem(item) {
     const classes = item.classes || "";

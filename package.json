@@ -1,11 +1,25 @@
 {
   "name": "taleem-slides",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "version": "1.2.0",
+  "description": "Taleem Slides Compiler — converts JSON into HTML, state timeline, and groups",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
   },
+  "scripts": {
+    "test": "vitest"
+  },
+  "devDependencies": {
+  "vitest": "^1.0.0"
+},
+  "keywords": [
+    "taleem",
+    "slides",
+    "presentation",
+    "compiler",
+    "state-engine"
+  ],
   "author": "Bilal Tariq",
   "license": "ISC"
 }

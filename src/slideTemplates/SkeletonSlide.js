@@ -1,4 +1,4 @@
-import { extractTimeline } from "../renders/extractTimeline.js";
+import { extractTimeline } from "../helpers/extractTimeline.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function SkeletonSlide(data) {

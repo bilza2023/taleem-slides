@@ -1,12 +1,7 @@
-import { extractTimeline } from "../renders/extractTimeline.js";
-import { buildSequentialStates } from "../renders/buildSequentialStates.js";
+import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function KeyIdeasSlide(data) {
-  function getSp(item, name) {
-    return item.spItems?.find(sp => sp.name === name)?.content;
-  }
-
   const rawItems = data.data ?? [];
   const items = addIdToItems(rawItems);
 
@@ -17,8 +12,7 @@ export function KeyIdeasSlide(data) {
   }
 
   const allIds = items.map(i => i.id);
-  const timeline = extractTimeline(items);
-  const actions = buildSequentialStates(timeline, allIds);
+  const actions = progressiveReveal(allIds);
 
   const html = `
     <section class="slide keyIdeasSlide">
@@ -27,8 +21,8 @@ export function KeyIdeasSlide(data) {
         .map(
           c => `
         <div id="${c.id}" class="key-idea hidden ${c.classes || ""}">
-          <div class="icon">${getSp(c, "icon") ?? ""}</div>
-          <div class="label">${c.content}</div>
+          <div class="icon">${c.icon ?? ""}</div>
+          <div class="label">${c.label}</div>
         </div>
       `
         )

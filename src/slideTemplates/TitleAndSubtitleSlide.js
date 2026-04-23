@@ -1,5 +1,4 @@
-import { extractTimeline } from "../renders/extractTimeline.js";
-import { buildSequentialStates } from "../renders/buildSequentialStates.js";
+import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TitleAndSubtitleSlide(data) {
@@ -9,10 +8,8 @@ export function TitleAndSubtitleSlide(data) {
     throw new Error("titleAndSubtitle: requires at least a title");
   }
 
-  // 🔹 1. attach ids
   const items = addIdToItems(rawItems);
 
-  // 🔹 2. pick items
   const titleItem = items.find(d => d.name === "title");
   const subtitleItem = items.find(d => d.name === "subtitle");
 
@@ -20,14 +17,9 @@ export function TitleAndSubtitleSlide(data) {
     throw new Error("titleAndSubtitle: requires title");
   }
 
-  // 🔹 3. behavior input (same items, no rebuild)
   const allIds = items.map(i => i.id);
+  const actions = progressiveReveal(allIds);
 
-  const timeline = extractTimeline(items);
-
-  const actions = buildSequentialStates(timeline, allIds);
-
-  // 🔹 4. HTML
   const html = `
     <section class="slide titleAndSubtitle">
 
@@ -53,10 +45,13 @@ export function TitleAndSubtitleSlide(data) {
 
     </section>
   `;
-//  console.log("{ html, actions }" ,{ html, actions });
-  return { html, actions,
-    groups : {
-    visible: [],
-    hidden: ["hidden"]
-  } };
+
+  return {
+    html,
+    actions,
+    groups: {
+      visible: [],
+      hidden: ["hidden"]
+    }
+  };
 }
