@@ -1,4 +1,3 @@
-import { extractTimeline } from "../helpers/extractTimeline.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function FocusListSlide(data) {
@@ -12,27 +11,7 @@ export function FocusListSlide(data) {
     throw new Error("focusList: requires bullets");
   }
 
-  // 🔹 timeline (same)
-  const timeline = extractTimeline(items);
-
-  // 🔹 build focus/dim actions (NOT sequentialStates)
-  const actions = [];
-
-  for (const step of timeline) {
-    const focusId = step.id;
-
-    const dimIds = bullets
-      .map(b => b.id)
-      .filter(id => id !== focusId);
-
-    actions.push({
-      time: step.time,
-      state: {
-        focus: [focusId],
-        dim: dimIds
-      }
-    });
-  }
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide focusList">
@@ -70,10 +49,7 @@ export function FocusListSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      focus: [],
-      dim: ["dim"]
-    }
+    animation: "highlightOne",
+    ids
   };
 }

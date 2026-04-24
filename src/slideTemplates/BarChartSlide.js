@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function BarChartSlide(data) {
@@ -11,16 +10,12 @@ export function BarChartSlide(data) {
   if (bars.length === 0) {
     return {
       html: `<section class="slide barChart"></section>`,
-      actions: [],
-      groups: {
-        visible: [],
-        hidden: ["hidden"]
-      }
+      animation: "progressiveReveal",
+      ids: []
     };
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const barsData = bars.map(d => ({
     id: d.id,
@@ -63,10 +58,7 @@ export function BarChartSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

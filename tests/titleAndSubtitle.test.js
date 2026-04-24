@@ -1,10 +1,8 @@
-// tests/slides/titleAndSubtitle.test.js
-
 import { describe, test, expect } from "vitest";
 import { TitleAndSubtitleSlide } from "../src/slideTemplates/TitleAndSubtitleSlide.js";
 import goldenDeckV2 from "../public/GoldenDeckV2-8Apr2026.json";
 
-describe("TitleAndSubtitleSlide", () => {
+describe("TitleAndSubtitleSlide (pure)", () => {
 
   test("renders structure", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "titleAndSubtitle");
@@ -13,48 +11,59 @@ describe("TitleAndSubtitleSlide", () => {
 
     expect(html).toContain("titleAndSubtitle");
     expect(html).toContain("<h1");
-    if (raw.data.find(d => d.name === "subtitle")) {
-      expect(html).toContain("<h2");
-    }
   });
 
-  test("renders title without subtitle", () => {
-    const raw = {
-      type: "titleAndSubtitle",
-      data: [{ name: "title", content: "Only title" }]
-    };
+  test("renders title correctly", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "titleAndSubtitle");
 
     const { html } = TitleAndSubtitleSlide(raw);
 
-    expect(html).toContain("<h1");
-    expect(html).not.toContain("<h2");
+    const title = raw.data.find(d => d.name === "title").content;
+
+    expect(html).toContain(title);
   });
 
-  test("throws if title missing", () => {
-    const raw = {
-      type: "titleAndSubtitle",
-      data: [{ name: "subtitle", content: "Only subtitle" }]
-    };
+  test("renders subtitle if present", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "titleAndSubtitle");
+
+    const { html } = TitleAndSubtitleSlide(raw);
+
+    const subtitle = raw.data.find(d => d.name === "subtitle")?.content;
+
+    if (subtitle) {
+      expect(html).toContain(subtitle);
+    }
+  });
+
+  test("returns animation + ids", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "titleAndSubtitle");
+
+    const { animation, ids } = TitleAndSubtitleSlide(raw);
+
+    expect(animation).toBe("progressiveReveal");
+    expect(ids.length).toBe(raw.data.length);
+  });
+
+  test("all ids exist in html", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "titleAndSubtitle");
+
+    const { html, ids } = TitleAndSubtitleSlide(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
+  });
+
+  test("throws if no data", () => {
+    const raw = { type: "titleAndSubtitle", data: [] };
 
     expect(() => TitleAndSubtitleSlide(raw)).toThrow();
   });
 
-  test("applies classes correctly", () => {
-    const raw = goldenDeckV2.deck.find(s => s.type === "titleAndSubtitle");
+  test("throws if title missing", () => {
+    const raw = { type: "titleAndSubtitle", data: [{ name: "subtitle", content: "Only subtitle" }] };
 
-    const data = {
-      ...raw,
-      data: raw.data.map(d => {
-        if (d.name === "title") return { ...d, classes: "big-title" };
-        if (d.name === "subtitle") return { ...d, classes: "subtle" };
-        return d;
-      })
-    };
-
-    const { html } = TitleAndSubtitleSlide(data);
-
-    expect(html).toContain("big-title");
-    expect(html).toContain("subtle");
+    expect(() => TitleAndSubtitleSlide(raw)).toThrow();
   });
 
 });

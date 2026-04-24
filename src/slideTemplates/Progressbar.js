@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function Progressbar(data) {
@@ -7,19 +6,16 @@ export function Progressbar(data) {
 
   const bars = items.filter(d => d.name === "bar");
 
+  // even if empty → still valid slide
   if (!bars.length) {
     return {
       html: `<section class="slide progressbar"></section>`,
-      actions: [],
-      groups: {
-        visible: [],
-        hidden: ["hidden"]
-      }
+      animation: "progressiveReveal",
+      ids: []
     };
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide progressbar">
@@ -47,10 +43,7 @@ export function Progressbar(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

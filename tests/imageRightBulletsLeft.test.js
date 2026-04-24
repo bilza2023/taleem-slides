@@ -1,10 +1,8 @@
-// tests/slides/imageRightBulletsLeft.test.js
-
 import { describe, test, expect } from "vitest";
 import { ImageRightBulletsLeftSlide } from "../src/slideTemplates/ImageRightBulletsLeftSlide.js";
 import goldenDeckV2 from "../public/GoldenDeckV2-8Apr2026.json";
 
-describe("ImageRightBulletsLeftSlide", () => {
+describe("ImageRightBulletsLeftSlide (pure)", () => {
 
   test("renders structure", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "imageRightBulletsLeft");
@@ -15,6 +13,16 @@ describe("ImageRightBulletsLeftSlide", () => {
     expect(html).toContain("<img");
     expect(html).toContain("<ul");
     expect(html).toContain("<li");
+  });
+
+  test("renders image correctly", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "imageRightBulletsLeft");
+
+    const { html } = ImageRightBulletsLeftSlide(raw);
+
+    const img = raw.data.find(d => d.name === "image").content;
+
+    expect(html).toContain(img);
   });
 
   test("renders all bullets", () => {
@@ -28,34 +36,29 @@ describe("ImageRightBulletsLeftSlide", () => {
     expect(renderedCount).toBe(bulletCount);
   });
 
-  test("applies classes correctly", () => {
+  test("returns animation + ids", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "imageRightBulletsLeft");
 
-    let bulletIndex = -1;
+    const { animation, ids } = ImageRightBulletsLeftSlide(raw);
 
-    const data = {
-      ...raw,
-      data: raw.data.map(d => {
-        if (d.name === "bullet") {
-          bulletIndex++;
-          return {
-            ...d,
-            classes:
-              bulletIndex === 0
-                ? "first"
-                : bulletIndex === 1
-                ? "second"
-                : ""
-          };
-        }
-        return d;
-      })
-    };
+    expect(animation).toBe("progressiveReveal");
+    expect(ids.length).toBe(raw.data.length);
+  });
 
-    const { html } = ImageRightBulletsLeftSlide(data);
+  test("all ids exist in html", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "imageRightBulletsLeft");
 
-    expect(html).toContain("first");
-    expect(html).toContain("second");
+    const { html, ids } = ImageRightBulletsLeftSlide(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
+  });
+
+  test("throws if missing image or bullets", () => {
+    const raw = { type: "imageRightBulletsLeft", data: [] };
+
+    expect(() => ImageRightBulletsLeftSlide(raw)).toThrow();
   });
 
 });

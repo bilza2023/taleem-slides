@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TwoColumnTextSlide(data) {
@@ -18,8 +17,7 @@ export function TwoColumnTextSlide(data) {
     throw new Error("twoColumnText: requires left and right content");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   function renderItem(item) {
     const classes = item.classes || "";
@@ -53,10 +51,7 @@ export function TwoColumnTextSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

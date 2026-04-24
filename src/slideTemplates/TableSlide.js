@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TableSlide(data) {
@@ -16,8 +15,7 @@ export function TableSlide(data) {
     throw new Error("table: requires row items");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide table">
@@ -43,10 +41,7 @@ export function TableSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

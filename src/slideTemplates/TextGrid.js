@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TextGridSlide(data) {
@@ -12,8 +11,7 @@ export function TextGridSlide(data) {
     throw new Error("textGrid: requires text items");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide textGrid">
@@ -38,10 +36,7 @@ export function TextGridSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

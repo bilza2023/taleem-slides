@@ -1,10 +1,8 @@
 
-
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function BulletListSlide(data) {
-  const rawItems = data.data ?? []; //lingering deck.deck i think 
+  const rawItems = data.data ?? [];
 
   const items = addIdToItems(rawItems);
 
@@ -15,8 +13,7 @@ export function BulletListSlide(data) {
     throw new Error("bulletList: requires at least one bullet");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide bulletList">
@@ -54,10 +51,7 @@ export function BulletListSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

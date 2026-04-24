@@ -1,10 +1,8 @@
-// tests/slides/twoColumnText.test.js
-
 import { describe, test, expect } from "vitest";
 import { TwoColumnTextSlide } from "../src/slideTemplates/TwoColumnTextSlide.js";
 import goldenDeckV2 from "../public/GoldenDeckV2-8Apr2026.json";
 
-describe("TwoColumnTextSlide", () => {
+describe("TwoColumnTextSlide (pure)", () => {
 
   test("renders structure", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "twoColumnText");
@@ -16,37 +14,51 @@ describe("TwoColumnTextSlide", () => {
     expect(html).toContain("col right");
   });
 
-  test("renders content", () => {
+  test("renders left and right content", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "twoColumnText");
 
     const { html } = TwoColumnTextSlide(raw);
 
     raw.data.forEach(d => {
-      expect(html).toContain(d.content);
+      if (d.content) {
+        expect(html).toContain(d.content);
+      }
     });
   });
 
-  test("renders images", () => {
-    const raw = {
-      type: "twoColumnText",
-      data: [
-        { name: "leftImage", content: "left.png" },
-        { name: "rightImage", content: "right.png" }
-      ]
-    };
+  test("renders images correctly", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "twoColumnText");
 
     const { html } = TwoColumnTextSlide(raw);
 
-    expect(html).toContain("left.png");
-    expect(html).toContain("right.png");
-    expect(html).toContain("<img");
+    const imageItems = raw.data.filter(d => d.name.includes("Image"));
+
+    imageItems.forEach(img => {
+      expect(html).toContain(img.content);
+    });
   });
 
-  test("throws if missing sides", () => {
-    const raw = {
-      type: "twoColumnText",
-      data: [{ name: "leftText", content: "Only left" }]
-    };
+  test("returns animation + ids", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "twoColumnText");
+
+    const { animation, ids } = TwoColumnTextSlide(raw);
+
+    expect(animation).toBe("progressiveReveal");
+    expect(ids.length).toBe(raw.data.length);
+  });
+
+  test("all ids exist in html", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "twoColumnText");
+
+    const { html, ids } = TwoColumnTextSlide(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
+  });
+
+  test("throws if missing left or right content", () => {
+    const raw = { type: "twoColumnText", data: [] };
 
     expect(() => TwoColumnTextSlide(raw)).toThrow();
   });

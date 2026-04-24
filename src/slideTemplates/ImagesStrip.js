@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function ImageStripSlide(data) {
@@ -12,8 +11,7 @@ export function ImageStripSlide(data) {
     throw new Error("imageStrip: requires at least one image");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide imageStrip">
@@ -39,10 +37,7 @@ export function ImageStripSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

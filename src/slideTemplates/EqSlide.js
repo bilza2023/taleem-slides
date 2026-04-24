@@ -1,4 +1,3 @@
-import { extractTimeline } from "../helpers/extractTimeline.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function EqSlide(data) {
@@ -10,11 +9,11 @@ export function EqSlide(data) {
 
   const items = addIdToItems(rawItems);
 
-  // 🔹 collect lines + spItems
+  // 🔹 build lines + spItems (keep deterministic ids)
   const lines = items.map(line => {
     const spItems = (line.spItems || []).map((sp, i) => ({
       ...sp,
-      id: `${line.id}-sp-${i + 1}` // stable id (no random)
+      id: `${line.id}-sp-${i + 1}`
     }));
 
     return {
@@ -23,34 +22,11 @@ export function EqSlide(data) {
     };
   });
 
-  const timeline = extractTimeline(items);
-
-  const lineIds = lines.map(l => l.id);
-  const spIds = lines.flatMap(l => l.spItems.map(sp => sp.id));
-
-  const actions = [];
-
-  for (const step of timeline) {
-    const focusId = step.id;
-
-    const dimIds = lineIds.filter(id => id !== focusId);
-
-    const currentLine = lines.find(l => l.id === focusId);
-
-    const visibleSp = currentLine?.spItems.map(sp => sp.id) || [];
-
-    const hiddenSp = spIds.filter(id => !visibleSp.includes(id));
-
-    actions.push({
-      time: step.time,
-      state: {
-        focus: [focusId],
-        dim: dimIds,
-        visible: visibleSp,
-        hidden: hiddenSp
-      }
-    });
-  }
+  // 🔹 IMPORTANT: include BOTH line ids + sp ids
+  const ids = [
+    ...lines.map(l => l.id),
+    ...lines.flatMap(l => l.spItems.map(sp => sp.id))
+  ];
 
   const html = `
   <section class="slide eq">
@@ -91,12 +67,7 @@ export function EqSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      focus: [],
-      dim: ["dim"],
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "highlightOne",
+    ids
   };
 }

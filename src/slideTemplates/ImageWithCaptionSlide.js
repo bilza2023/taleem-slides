@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function ImageWithCaptionSlide(data) {
@@ -13,8 +12,7 @@ export function ImageWithCaptionSlide(data) {
     throw new Error("imageWithCaption: requires image");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <figure class="slide imageWithCaption">
@@ -43,10 +41,7 @@ export function ImageWithCaptionSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

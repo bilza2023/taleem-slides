@@ -1,4 +1,3 @@
-import { extractTimeline } from "../helpers/extractTimeline.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function SkeletonSlide(data) {
@@ -10,44 +9,27 @@ export function SkeletonSlide(data) {
 
   const items = addIdToItems(rawItems);
 
-  const timeline = extractTimeline(items);
-
-  const allIds = items.map(i => i.id);
-
-  const actions = [];
-
-  for (const step of timeline) {
-    const activeId = step.id;
-
-    const hiddenIds = allIds.filter(id => id !== activeId);
-
-    actions.push({
-      time: step.time,
-      state: {
-        visible: [activeId],
-        hidden: hiddenIds
-      }
-    });
-  }
+  const ids = items.map(i => i.id);
 
   function renderItem(item) {
     const id = item.id;
+    const classes = item.classes || "";
 
     if (item.name === "title") {
-      return `<h1 id="${id}" class="hidden ${item.classes || ""}">
+      return `<h1 id="${id}" class="hidden ${classes}">
         ${item.content}
       </h1>`;
     }
 
     if (item.name === "para") {
-      return `<p id="${id}" class="hidden ${item.classes || ""}">
+      return `<p id="${id}" class="hidden ${classes}">
         ${item.content}
       </p>`;
     }
 
     if (item.name === "image") {
       return `
-        <div id="${id}" class="skeleton-image hidden ${item.classes || ""}">
+        <div id="${id}" class="skeleton-image hidden ${classes}">
           <img src="${item.content}" />
         </div>
       `;
@@ -68,10 +50,7 @@ export function SkeletonSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "oneAtATime",
+    ids
   };
 }

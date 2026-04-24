@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TitleAndParaSlide(data) {
@@ -17,8 +16,7 @@ export function TitleAndParaSlide(data) {
     throw new Error("titleAndPara: requires para");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide titleAndPara">
@@ -28,7 +26,7 @@ export function TitleAndParaSlide(data) {
           ? `
             <h1 
               id="${titleItem.id}" 
-              class="hidden taleem-heading-md "
+              class="hidden taleem-heading-md"
             >
               ${titleItem.content}
             </h1>
@@ -38,7 +36,7 @@ export function TitleAndParaSlide(data) {
 
       <p 
         id="${paraItem.id}" 
-        class="hidden taleem-para "
+        class="hidden taleem-para"
       >
         ${paraItem.content}
       </p>
@@ -48,10 +46,7 @@ export function TitleAndParaSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

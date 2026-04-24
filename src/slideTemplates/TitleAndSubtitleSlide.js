@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function TitleAndSubtitleSlide(data) {
@@ -17,8 +16,7 @@ export function TitleAndSubtitleSlide(data) {
     throw new Error("titleAndSubtitle: requires title");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide titleAndSubtitle">
@@ -48,10 +46,7 @@ export function TitleAndSubtitleSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

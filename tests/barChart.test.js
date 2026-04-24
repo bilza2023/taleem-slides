@@ -7,17 +7,33 @@ describe("BarChartSlide (pure)", () => {
   test("renders bar chart structure", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "barChart");
 
-    const { html } = BarChartSlide(raw); // ✅ FIX
+    const { html } = BarChartSlide(raw);
 
     expect(html).toContain("barChart");
     expect(html).toContain("bar-row");
     expect(html).toContain("bar-fill");
   });
 
+  test("returns animation type", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "barChart");
+
+    const { animation } = BarChartSlide(raw);
+
+    expect(animation).toBe("progressiveReveal");
+  });
+
+  test("returns ids for all items", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "barChart");
+
+    const { ids } = BarChartSlide(raw);
+
+    expect(ids.length).toBe(raw.data.length);
+  });
+
   test("renders all bars", () => {
     const raw = goldenDeckV2.deck.find(s => s.type === "barChart");
 
-    const { html } = BarChartSlide(raw); // ✅ FIX
+    const { html } = BarChartSlide(raw);
 
     const barCount = raw.data.filter(d => d.name === "bar").length;
     const renderedCount = (html.match(/bar-row/g) || []).length;
@@ -37,10 +53,20 @@ describe("BarChartSlide (pure)", () => {
       )
     };
 
-    const { html } = BarChartSlide(data); // ✅ FIX
+    const { html } = BarChartSlide(data);
 
     expect(html).toContain("first");
     expect(html).toContain("second");
+  });
+
+  test("all ids are present in html", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "barChart");
+
+    const { html, ids } = BarChartSlide(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
   });
 
 });

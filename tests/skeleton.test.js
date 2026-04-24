@@ -1,15 +1,12 @@
-// tests/slides/skeletonSlide.test.js
 
 import { describe, test, expect } from "vitest";
 import { SkeletonSlide } from "../src/slideTemplates/SkeletonSlide.js";
+import goldenDeckV2 from "../public/GoldenDeckV2-8Apr2026.json";
 
-describe("SkeletonSlide", () => {
+describe("SkeletonSlide (pure)", () => {
 
   test("renders structure", () => {
-    const raw = {
-      type: "skeleton",
-      data: [{ name: "title", content: "Hello" }]
-    };
+    const raw = goldenDeckV2.deck.find(s => s.type === "skeleton");
 
     const { html } = SkeletonSlide(raw);
 
@@ -17,37 +14,47 @@ describe("SkeletonSlide", () => {
     expect(html).toContain("skeleton-body");
   });
 
-  test("renders different item types", () => {
-    const raw = {
-      type: "skeleton",
-      data: [
-        { name: "title", content: "Title" },
-        { name: "para", content: "Para" },
-        { name: "image", content: "img.png" }
-      ]
-    };
+  test("renders all items", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "skeleton");
 
     const { html } = SkeletonSlide(raw);
 
-    expect(html).toContain("<h1");
-    expect(html).toContain("<p");
-    expect(html).toContain("<img");
-    // ❌ removed ul/li expectations
+    raw.data.forEach(d => {
+      if (d.content) {
+        expect(html).toContain(d.content);
+      }
+    });
   });
 
-  test("renders all items", () => {
-    const raw = {
-      type: "skeleton",
-      data: [
-        { name: "title", content: "T" },
-        { name: "para", content: "P" }
-      ]
-    };
+  test("renders images correctly", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "skeleton");
 
     const { html } = SkeletonSlide(raw);
 
-    expect((html.match(/<h1/g) || []).length).toBe(1);
-    expect((html.match(/<p/g) || []).length).toBe(1);
+    const images = raw.data.filter(d => d.name === "image");
+
+    images.forEach(img => {
+      expect(html).toContain(img.content);
+    });
+  });
+
+  test("returns animation + ids", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "skeleton");
+
+    const { animation, ids } = SkeletonSlide(raw);
+
+    expect(animation).toBe("oneAtATime");
+    expect(ids.length).toBe(raw.data.length);
+  });
+
+  test("all ids exist in html", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "skeleton");
+
+    const { html, ids } = SkeletonSlide(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
   });
 
   test("throws if no items", () => {

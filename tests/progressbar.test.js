@@ -1,17 +1,13 @@
 import { describe, test, expect } from "vitest";
 import { Progressbar } from "../src/slideTemplates/Progressbar.js";
 
-describe("Progressbar", () => {
+describe("Progressbar (pure)", () => {
 
   test("renders structure", () => {
     const raw = {
       type: "progressbar",
       data: [
-        {
-          name: "bar",       // ✅ FIX: was "progress", Progressbar.js filters name === "bar"
-          label: "Test",     // ✅ FIX: was `content`, Progressbar.js reads b.label
-          value: 50          // ✅ FIX: was spItems[{name:"value", content:50}], Progressbar.js reads b.value
-        }
+        { name: "bar", label: "Test", value: 50 }
       ]
     };
 
@@ -22,20 +18,37 @@ describe("Progressbar", () => {
     expect(html).toContain("progressbar-fill");
   });
 
+  test("returns animation type", () => {
+    const raw = {
+      type: "progressbar",
+      data: [{ name: "bar", label: "Test", value: 50 }]
+    };
+
+    const { animation } = Progressbar(raw);
+
+    expect(animation).toBe("progressiveReveal");
+  });
+
+  test("returns ids for all items", () => {
+    const raw = {
+      type: "progressbar",
+      data: [
+        { name: "bar", label: "A", value: 20 },
+        { name: "bar", label: "B", value: 40 }
+      ]
+    };
+
+    const { ids } = Progressbar(raw);
+
+    expect(ids.length).toBe(raw.data.length);
+  });
+
   test("renders all bars", () => {
     const raw = {
       type: "progressbar",
       data: [
-        {
-          name: "bar",   // ✅ FIX
-          label: "A",    // ✅ FIX
-          value: 20      // ✅ FIX
-        },
-        {
-          name: "bar",   // ✅ FIX
-          label: "B",    // ✅ FIX
-          value: 40      // ✅ FIX
-        }
+        { name: "bar", label: "A", value: 20 },
+        { name: "bar", label: "B", value: 40 }
       ]
     };
 
@@ -50,16 +63,8 @@ describe("Progressbar", () => {
     const raw = {
       type: "progressbar",
       data: [
-        {
-          name: "bar",   // ✅ FIX
-          label: "A",    // ✅ FIX
-          value: 150     // ✅ FIX — should clamp to 100
-        },
-        {
-          name: "bar",   // ✅ FIX
-          label: "B",    // ✅ FIX
-          value: -20     // ✅ FIX — should clamp to 0
-        }
+        { name: "bar", label: "A", value: 150 },
+        { name: "bar", label: "B", value: -20 }
       ]
     };
 
@@ -72,9 +77,26 @@ describe("Progressbar", () => {
   test("renders empty section if no bars", () => {
     const raw = { type: "progressbar", data: [] };
 
-    const { html } = Progressbar(raw);
+    const { html, ids } = Progressbar(raw);
 
     expect(html).toContain("progressbar");
+    expect(ids.length).toBe(0);
+  });
+
+  test("all ids are present in html", () => {
+    const raw = {
+      type: "progressbar",
+      data: [
+        { name: "bar", label: "A", value: 20 },
+        { name: "bar", label: "B", value: 40 }
+      ]
+    };
+
+    const { html, ids } = Progressbar(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
   });
 
 });

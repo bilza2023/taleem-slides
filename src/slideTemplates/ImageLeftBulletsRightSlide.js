@@ -1,4 +1,3 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function ImageLeftBulletsRightSlide(data) {
@@ -13,8 +12,7 @@ export function ImageLeftBulletsRightSlide(data) {
     throw new Error("imageLeftBulletsRight: requires image and bullets");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide imageLeftBulletsRight">
@@ -45,10 +43,7 @@ export function ImageLeftBulletsRightSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

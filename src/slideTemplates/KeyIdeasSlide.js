@@ -1,4 +1,4 @@
-import { progressiveReveal } from "../helpers/progressiveReveal.js";
+
 import { addIdToItems } from "../helpers/addIdToItems.js";
 
 export function KeyIdeasSlide(data) {
@@ -11,8 +11,7 @@ export function KeyIdeasSlide(data) {
     throw new Error("keyIdeasSlide: requires cards");
   }
 
-  const allIds = items.map(i => i.id);
-  const actions = progressiveReveal(allIds);
+  const ids = items.map(i => i.id);
 
   const html = `
     <section class="slide keyIdeasSlide">
@@ -33,10 +32,7 @@ export function KeyIdeasSlide(data) {
 
   return {
     html,
-    actions,
-    groups: {
-      visible: [],
-      hidden: ["hidden"]
-    }
+    animation: "progressiveReveal",
+    ids
   };
 }

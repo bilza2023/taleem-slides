@@ -1,31 +1,67 @@
-// tests/slides/imageWithTitle.test.js
-
 import { describe, test, expect } from "vitest";
-import { ImageWithTitleSlide } from "../src/slideTemplates/ImageWithTitleSlide.js";
+import { KeyIdeasSlide } from "../src/slideTemplates/KeyIdeasSlide.js";
 import goldenDeckV2 from "../public/GoldenDeckV2-8Apr2026.json";
 
-describe("ImageWithTitleSlide", () => {
+describe("KeyIdeasSlide (pure)", () => {
 
   test("renders structure", () => {
-    const raw = goldenDeckV2.deck.find(s => s.type === "imageWithTitle");
+    const raw = goldenDeckV2.deck.find(s => s.type === "keyIdeasSlide");
 
-    const { html } = ImageWithTitleSlide(raw);
+    const { html } = KeyIdeasSlide(raw);
 
-    expect(html).toContain("imageWithTitle");
-    expect(html).toContain("<h1");
-    expect(html).toContain("<img");
+    expect(html).toContain("keyIdeasSlide");
+    expect(html).toContain("key-idea");
   });
 
-  test("renders title and image correctly", () => {
-    const raw = goldenDeckV2.deck.find(s => s.type === "imageWithTitle");
+  test("renders all cards", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "keyIdeasSlide");
 
-    const { html } = ImageWithTitleSlide(raw);
+    const { html } = KeyIdeasSlide(raw);
 
-    const title = raw.data.find(d => d.name === "title").content;
-    const image = raw.data.find(d => d.name === "image").content;
+    const cardCount = raw.data.filter(d => d.name === "card").length;
+    const renderedCount = (html.match(/key-idea/g) || []).length;
 
-    expect(html).toContain(title);
-    expect(html).toContain(image);
+    expect(renderedCount).toBe(cardCount);
+  });
+
+  test("renders icon and label", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "keyIdeasSlide");
+
+    const { html } = KeyIdeasSlide(raw);
+
+    raw.data.forEach(d => {
+      if (d.name === "card") {
+        expect(html).toContain(d.label);
+        if (d.icon) {
+          expect(html).toContain(d.icon);
+        }
+      }
+    });
+  });
+
+  test("returns animation + ids", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "keyIdeasSlide");
+
+    const { animation, ids } = KeyIdeasSlide(raw);
+
+    expect(animation).toBe("progressiveReveal");
+    expect(ids.length).toBe(raw.data.length);
+  });
+
+  test("all ids exist in html", () => {
+    const raw = goldenDeckV2.deck.find(s => s.type === "keyIdeasSlide");
+
+    const { html, ids } = KeyIdeasSlide(raw);
+
+    ids.forEach(id => {
+      expect(html).toContain(`id="${id}"`);
+    });
+  });
+
+  test("throws if no cards provided", () => {
+    const raw = { type: "keyIdeasSlide", data: [] };
+
+    expect(() => KeyIdeasSlide(raw)).toThrow();
   });
 
 });
