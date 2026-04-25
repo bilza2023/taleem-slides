@@ -1,4 +1,7 @@
-# Taleem Slides — README (Current State + Future Direction)
+
+# Taleem Slides — README (Current Architecture)
+
+---
 
 ## Overview
 
@@ -10,27 +13,36 @@
 
 It does NOT:
 
-* manipulate DOM
-* handle timing execution
+* manipulate the DOM
+* execute timing
 * apply styles
+* decide animations inside slides
 
 ---
 
 ## Core Philosophy
 
 ```text
-JSON → (compile) → HTML + STATE → (runner) → DOM
+JSON → Slides → (wrapper + primitives) → HTML + actions + groups → runner → DOM
 ```
-
-* Slides define structure and timing interpretation
-* Action-runner enforces state
-* CSS defines appearance
 
 ---
 
-## Current API (LOCKED)
+## 🧠 Core Design (IMPORTANT)
 
-### Main Function
+### Separation of Concerns
+
+| Layer         | Responsibility                 |
+| ------------- | ------------------------------ |
+| Slide         | Defines structure (HTML + ids) |
+| Primitive     | Defines behavior (state logic) |
+| Wrapper       | Connects slide → primitive     |
+| Action Runner | Applies state to DOM           |
+| CSS           | Controls appearance            |
+
+---
+
+## 🔧 Main API
 
 ```js
 renderTaleemSlide(json)
@@ -38,7 +50,7 @@ renderTaleemSlide(json)
 
 ---
 
-### Output Shape
+## 📦 Output Format
 
 ```js
 {
@@ -47,38 +59,49 @@ renderTaleemSlide(json)
     {
       time: number,
       state: {
-        [groupName]: string[] // ids
+        [groupName]: string[]
       }
     }
   ],
   groups: {
-    [groupName]: string[] // css classes
+    [groupName]: string[]
   }
 }
 ```
 
 ---
 
-## Key Concepts
+## 🧩 Slide Contract (NEW — LOCKED)
 
-### 1. HTML
+Every slide must return:
 
-* Fully static
-* Contains all elements with IDs
-* May include initial classes like `hidden`
+```js
+{
+  html: string,
+  animation: string,
+  ids: string[]
+}
+```
+
+### Rules:
+
+* HTML must include **all elements with ids**
+* No actions
+* No groups
+* No timing logic
+* No animation logic
 
 ---
 
-### 2. Actions
+## 🎬 Animation Primitives (CORE SYSTEM)
 
-* Timeline of **complete state snapshots**
-* At any time → exactly ONE valid state
+All behavior is handled by **3 primitives only**:
 
 ---
 
-### 3. Groups
+### 1. `progressiveReveal`
 
-Define behavior mapping:
+> Items appear one-by-one and stay visible
 
 ```js
 groups = {
@@ -89,216 +112,215 @@ groups = {
 
 ---
 
-## Behavior Model (CURRENT)
+### 2. `highlightOne`
 
-* Most slides use **accumulation behavior**
-* Implemented via:
-
-```js
-buildSequentialStates()
-```
-
-* Items appear one-by-one and remain visible
-
----
-
-## System Boundaries
-
-| Layer          | Responsibility                 |
-| -------------- | ------------------------------ |
-| taleem-builder | generates valid JSON           |
-| taleem-slides  | compiles JSON → HTML + actions |
-| action-runner  | applies state to DOM           |
-| player         | rendering + CSS                |
-
----
-
-## What is STABLE (Do Not Change)
-
-* Output API shape
-* Action structure
-* Group mechanism
-* State completeness rule
-
----
-
-# ⚠️ Known Limitations (Accepted for Now)
-
-1. Behavior is hardcoded (accumulation)
-2. HTML includes behavior classes (`hidden`)
-3. No formal behavior abstraction
-4. ID generation may not be deterministic
-5. CSS animations partially conflict with state model
-
----
-
-# 🚀 Future Development Plan
-
-## Phase 1 — Internal Refactor (NO API CHANGE)
-
-Goal: Improve internals without breaking player
-
-### 1. Behavior Layer (internal only)
-
-Replace:
+> One item focused, others dim
 
 ```js
-buildSequentialStates()
+groups = {
+  focus: [],
+  dim: ["dim"]
+}
 ```
 
-With:
+Used by:
+
+* FocusList
+* Eq (with extensions)
+
+---
+
+### 3. `oneAtATime`
+
+> Only one item visible at a time
 
 ```js
-behaviors.accumulate()
+groups = {
+  visible: [],
+  hidden: ["hidden"]
+}
 ```
 
-Future behaviors:
+Used by:
 
-* accumulate (current)
-* focusOne (focus list)
-* replace
-* toggle
-* blink (advanced)
-
-👉 This is internal — API remains SAME
+* Skeleton slides
 
 ---
 
-### 2. Timeline System Upgrade
+## ⚙️ Wrapper (renderTaleemSlide)
 
-* Fully support `timings[]` (event-based)
-* Remove legacy `showAt`
-* Standardize `extractTimeline()`
+The wrapper:
+
+1. Calls slide → gets:
+
+   ```js
+   html, animation, ids
+   ```
+
+2. Validates:
+
+   * ids exist
+   * timings (if provided)
+
+3. Runs primitive:
+
+```js
+runPrimitive({
+  type: animation,
+  ids,
+  timings
+})
+```
+
+4. Returns:
+
+```js
+{ html, actions, groups }
+```
 
 ---
 
-### 3. Deterministic IDs
+## ⏱ Timing Model
 
-Replace random IDs with:
+* Timing is **optional**
+* Provided by user:
+
+```js
+timings: [t1, t2, t3]
+```
+
+Rules:
+
+* length === ids.length
+* strictly increasing
+
+---
+
+## 🧠 State Model
+
+* Each action is a **complete state snapshot**
+* No partial updates
+* No merging
+
+```js
+{
+  time: 5,
+  state: {
+    visible: ["id1"],
+    hidden: ["id2", "id3"]
+  }
+}
+```
+
+---
+
+## 🎯 Eq Slide Special Case
+
+Eq slide uses:
+
+* `highlightOne` primitive
+* PLUS additional ids (side panel)
+
+Meaning:
+
+* focus → line
+* dim → other lines
+* visible/hidden → side panel items
+
+👉 Still same primitive, extended mapping
+
+---
+
+## 🔒 What is LOCKED (Do Not Change)
+
+* Output API (`html + actions + groups`)
+* Slide contract (`html + animation + ids`)
+* Primitive system (3 only)
+* State snapshot model
+
+---
+
+## ❌ What Slides MUST NOT DO
+
+* generate actions ❌
+* define groups ❌
+* use timeline logic ❌
+* import primitives ❌
+
+---
+
+## ⚠️ Known Simplifications (Intentional)
+
+* No per-item timing inside slides
+* No After Effects style timeline
+* Sequence = array order
+* Behavior limited to 3 primitives
+
+👉 This is by design (NOT a limitation)
+
+---
+
+## 🚀 Future Direction (SAFE)
+
+### 1. Primitive Extensions (optional)
+
+* better Eq mapping
+* custom behaviors (still primitive-based)
+
+---
+
+### 2. Validation Layer
+
+* stronger schema validation
+* id consistency checks
+
+---
+
+### 3. Testing
+
+* golden tests per slide
+* full wrapper integration tests
+
+---
+
+## ❌ What NOT to Do
+
+* ❌ Do NOT reintroduce per-item timing
+* ❌ Do NOT move logic back into slides
+* ❌ Do NOT add new primitives casually
+* ❌ Do NOT mix animation logic with HTML
+
+---
+
+## 🧭 Guiding Principle
 
 ```text
-scopeId + slideIndex + itemIndex
-```
-
-Ensures:
-
-* reproducibility
-* testability
-* multi-player support
-
----
-
-## Phase 2 — Rendering Improvements
-
-### 4. Remove Behavior from HTML
-
-Move from:
-
-```html
-class="hidden"
-```
-
-To:
-
-```text
-state-driven visibility only
-```
-
----
-
-### 5. State-driven Animation
-
-Shift from:
-
-```text
-CSS animation on load
-```
-
-To:
-
-```text
-CSS transition on class change
-```
-
----
-
-## Phase 3 — Advanced Behaviors
-
-Introduce new slide capabilities:
-
-### 6. Focus Behavior
-
-```text
-one item active, others dim
-```
-
----
-
-### 7. Replace Behavior
-
-```text
-one item at a time (no accumulation)
-```
-
----
-
-### 8. Toggle / Blink
-
-```text
-items appear/disappear over time
-```
-
----
-
-## Phase 4 — Tooling & Validation
-
-### 9. Strong Validation
-
-* ensure complete state
-* validate IDs
-* validate timeline consistency
-
----
-
-### 10. Golden Slide Tests
-
-* snapshot testing per slide type
-* prevent regressions
-
----
-
-# ⚠️ What NOT to Do
-
-* ❌ Do NOT change output API
-* ❌ Do NOT move logic into action-runner
-* ❌ Do NOT mix CSS timing with logic timing
-* ❌ Do NOT introduce partial state updates
-
----
-
-# 🧭 Guiding Principle
-
-```text
-Slides decide WHAT should be true
+Slides define WHAT exists
+Primitives define WHAT happens
 Runner enforces it
-CSS decides HOW it looks
+CSS defines HOW it looks
 ```
 
 ---
 
-# 🧠 Final Note
+## 🧠 Final Note
 
-This system is:
+This system is now:
 
+* simple
 * deterministic
-* composable
-* extensible
+* testable
+* scalable
 
-The current version is **stable and production-ready**.
+You have:
 
-Future work should focus on:
-👉 internal clarity
-👉 behavior abstraction
-👉 zero breaking changes
+👉 removed accidental complexity
+👉 eliminated duplicate logic
+👉 unified all slides under one model
 
 ---
+
+## 🔥 One-line Summary
+
+> Taleem Slides is a **structure + behavior compiler powered by 3 primitives**
+
